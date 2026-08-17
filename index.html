@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>專業個人履歷 | 跨境商務・數位行銷・客服經營・英文培訓</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fffbe1',
+                            100: '#fef3c7',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            dark: '#1c130d',
+                            card: '#fffbf5'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', '"Noto Sans TC"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #fdfbf7;
+            color: #292524;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .dark body {
+            background-color: #14100d;
+            color: #e7e5e4;
+        }
+        .glass-panel {
+            background: rgba(255, 253, 248, 0.88);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(217, 119, 6, 0.18);
+            box-shadow: 0 10px 30px -10px rgba(180, 83, 9, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .dark .glass-panel {
+            background: rgba(28, 20, 15, 0.88);
+            border: 1px solid rgba(217, 119, 6, 0.25);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+        .glass-panel-hover:hover {
+            background: rgba(255, 255, 255, 0.98);
+            border-color: rgba(217, 119, 6, 0.4);
+            transform: translateY(-4px);
+            box-shadow: 0 18px 38px -10px rgba(217, 119, 6, 0.2);
+        }
+        .dark .glass-panel-hover:hover {
+            background: rgba(38, 28, 21, 0.98);
+            border-color: rgba(245, 158, 11, 0.45);
+            box-shadow: 0 18px 38px -10px rgba(245, 158, 11, 0.18);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #d97706 0%, #ea580c 50%, #e11d48 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .dark .gradient-text {
+            background: linear-gradient(135deg, #fbbf24 0%, #f97316 50%, #fb7185 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #d97706 0%, #ea580c 50%, #e11d48 100%);
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fdfbf7;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #14100d;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d6d3d1;
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #44403c;
+        }
+        
+        /* Sound Wave Animation */
+        @keyframes soundWave {
+            0%, 100% { height: 4px; }
+            50% { height: 16px; }
+        }
+        .wave-bar {
+            display: inline-block;
+            width: 3px;
+            background-color: currentColor;
+            border-radius: 2px;
+            animation: soundWave 1.2s infinite ease-in-out;
+        }
+        .wave-bar:nth-child(1) { animation-delay: 0.0s; }
+        .wave-bar:nth-child(2) { animation-delay: 0.2s; }
+        .wave-bar:nth-child(3) { animation-delay: 0.4s; }
+    </style>
+</head>
+<body class="font-sans antialiased text-stone-700 dark:text-stone-200 min-h-screen flex flex-col justify-between selection:bg-amber-500 selection:text-white">
+
+    <!-- Audio Element -->
+    <audio id="bg-music" loop preload="auto" src="https://img.ai365.fans/artworks/e014bf42-7e33-4017-8063-7260d96d1eac/xigdi1worul.mp3"></audio>
+
+    <header class="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-amber-200/50 dark:border-amber-900/30 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <a href="#about" class="flex items-center gap-2.5 group">
+                <img src="https://duk.tw/ozJe00.jpg" onerror="this.onerror=null; this.src='https://placehold.co/100x100/d97706/ffffff?text=User';" alt="個人頭像" class="w-10 h-10 rounded-xl object-cover border border-amber-300 dark:border-amber-600 shadow-md shadow-amber-500/20 group-hover:scale-105 transition-transform">
+                <span class="text-base sm:text-lg font-bold tracking-tight text-stone-800 dark:text-stone-100 group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors">全方位跨域人才 Portfolio</span>
+            </a>
+
+            <!-- Desktop Navigation Links -->
+            <nav class="hidden md:flex items-center gap-6 text-sm font-semibold">
+                <a href="#about" class="text-stone-600 dark:text-stone-300 hover:text-amber-700 dark:hover:text-amber-400 transition-colors">關於我</a>
+                <a href="#highlights" class="text-stone-600 dark:text-stone-300 hover:text-amber-700 dark:hover:text-amber-400 transition-colors">關鍵成效</a>
+                <a href="#experience" class="text-stone-600 dark:text-stone-300 hover:text-amber-700 dark:hover:text-amber-400 transition-colors">專業領域經歷</a>
+                <a href="#skills" class="text-stone-600 dark:text-stone-300 hover:text-amber-700 dark:hover:text-amber-400 transition-colors">核心技能</a>
+
+                <!-- Theme Toggle Button -->
+                <button onclick="toggleTheme()" class="p-2 rounded-xl bg-amber-100/80 dark:bg-stone-800 text-stone-700 dark:text-amber-300 hover:bg-amber-200 dark:hover:bg-stone-700 transition-all flex items-center justify-center text-base" title="切換深淺模式">
+                    <i id="theme-icon" class="fa-solid fa-moon"></i>
+                </button>
+
+                <!-- Music Toggle Button (Navbar) -->
+                <button onclick="toggleMusic()" id="nav-music-btn" class="px-3.5 py-1.5 rounded-xl bg-amber-100/90 dark:bg-stone-800 text-amber-800 dark:text-amber-300 hover:bg-amber-200 dark:hover:bg-stone-700 transition-all flex items-center gap-2 text-xs font-bold border border-amber-300/60 dark:border-amber-700/50 shadow-sm">
+                    <i id="nav-music-icon" class="fa-solid fa-music"></i>
+                    <span id="nav-music-text">背景音樂 OFF</span>
+                    <div id="nav-wave-box" class="hidden flex items-center gap-0.5 h-4 text-amber-600 dark:text-amber-400">
+                        <span class="wave-bar"></span>
+                        <span class="wave-bar"></span>
+                        <span class="wave-bar"></span>
+                    </div>
+                </button>
+
+                <a href="#contact" class="px-4 py-2 rounded-lg gradient-bg text-white font-semibold hover:opacity-90 transition-opacity shadow-md shadow-amber-500/20">
+                    立即聯繫
+                </a>
+            </nav>
+
+            <!-- Mobile Action Buttons -->
+            <div class="flex items-center gap-2 md:hidden">
+                <button onclick="toggleTheme()" class="p-2 rounded-xl bg-amber-100/80 dark:bg-stone-800 text-stone-700 dark:text-amber-300 text-sm">
+                    <i id="theme-icon-mobile" class="fa-solid fa-moon"></i>
+                </button>
+                <button id="menu-btn" class="p-2 text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white focus:outline-none" aria-label="Toggle Menu">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer Menu -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-amber-200/60 dark:border-amber-900/40 bg-amber-50/95 dark:bg-stone-900/95 px-4 pt-3 pb-6 space-y-3">
+            <a href="#about" class="block py-2 text-stone-700 dark:text-stone-200 hover:text-amber-700 dark:hover:text-amber-400 font-medium mobile-nav-link">關於我</a>
+            <a href="#highlights" class="block py-2 text-stone-700 dark:text-stone-200 hover:text-amber-700 dark:hover:text-amber-400 font-medium mobile-nav-link">關鍵成效</a>
+            <a href="#experience" class="block py-2 text-stone-700 dark:text-stone-200 hover:text-amber-700 dark:hover:text-amber-400 font-medium mobile-nav-link">專業領域經歷</a>
+            <a href="#skills" class="block py-2 text-stone-700 dark:text-stone-200 hover:text-amber-700 dark:hover:text-amber-400 font-medium mobile-nav-link">核心技能</a>
+            
+            <button onclick="toggleMusic()" class="w-full py-2.5 px-4 rounded-lg bg-amber-100 dark:bg-stone-800 text-stone-800 dark:text-amber-300 font-semibold text-sm flex items-center justify-center gap-2">
+                <i class="fa-solid fa-music"></i>
+                <span id="mobile-music-text">切換背景音樂 (目前 OFF)</span>
+            </button>
+
+            <a href="#contact" class="block py-2.5 text-center rounded-lg gradient-bg text-white font-semibold shadow-md shadow-amber-500/20 mobile-nav-link">
+                立即聯繫
+            </a>
+        </div>
+    </header>
+
+    <!-- Floating Quick Music Player Button -->
+    <div class="fixed bottom-6 right-6 z-40 flex flex-col gap-3">
+        <button onclick="toggleMusic()" id="float-music-btn" class="w-13 h-13 rounded-full gradient-bg text-white shadow-xl shadow-amber-500/30 flex items-center justify-center text-xl hover:scale-110 active:scale-95 transition-all group" title="播放/暫停背景音樂">
+            <i id="float-music-icon" class="fa-solid fa-compact-disc transition-transform"></i>
+        </button>
+    </div>
+
+    <main class="flex-grow pt-16">
+        <section id="about" class="relative py-20 lg:py-28 overflow-hidden">
+            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-amber-200/50 dark:from-amber-900/20 via-amber-50/20 dark:via-transparent to-transparent pointer-events-none"></div>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                    
+                    <!-- Bio Intro Text -->
+                    <div class="lg:col-span-7 space-y-6">
+                        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100/80 dark:bg-amber-950/60 border border-amber-300/60 dark:border-amber-700/50 text-amber-800 dark:text-amber-300 text-xs sm:text-sm font-bold shadow-sm">
+                            <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping"></span>
+                            整合行銷・跨境開發・客製培訓・CRM 專家
+                        </div>
+                        
+                        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-stone-900 dark:text-stone-100 leading-tight">
+                            連結全球市場與客戶 <br>
+                            創造高成效 <span class="gradient-text">商業與培訓價值</span>
+                        </h1>
+                        
+                        <p class="text-base sm:text-lg text-stone-600 dark:text-stone-300 leading-relaxed max-w-2xl font-medium">
+                            具備豐富的跨境商務溝通、數位行銷、電商平台經營與客製化英語教學經歷。擅長深化客戶關係（維繫 1000+ 客戶）、拓展海外潛力 Leads、金流接洽與高轉化率社群影音行銷，為企業帶來實質業績成長。
+                        </p>
+
+                        <div class="pt-2 flex flex-wrap gap-4 items-center">
+                            <a href="#experience" class="px-6 py-3.5 rounded-xl gradient-bg text-white font-semibold hover:opacity-90 transition-all flex items-center gap-2 shadow-lg shadow-amber-500/25">
+                                <span>探索四大核心經驗</span>
+                                <i class="fa-solid fa-arrow-down text-sm"></i>
+                            </a>
+                            <button onclick="openAboutDetail()" class="px-6 py-3.5 rounded-xl glass-panel text-stone-800 dark:text-stone-100 hover:text-amber-800 dark:hover:text-amber-300 hover:border-amber-400/50 transition-all flex items-center gap-2">
+                                <i class="fa-regular fa-id-card"></i>
+                                <span>點擊查看「關於我」詳細履歷</span>
+                            </button>
+                        </div>
+
+                        <!-- Key Skill Badges -->
+                        <div class="pt-6 border-t border-amber-200/60 dark:border-amber-900/40 flex flex-wrap gap-2 text-xs font-medium text-stone-700 dark:text-stone-300">
+                            <span class="px-3 py-1.5 rounded-lg bg-amber-100/70 dark:bg-amber-900/30 border border-amber-200/80 dark:border-amber-800/40"><i class="fa-solid fa-check text-amber-600 dark:text-amber-400 mr-1.5"></i>CRM 客服經營</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-amber-100/70 dark:bg-amber-900/30 border border-amber-200/80 dark:border-amber-800/40"><i class="fa-solid fa-check text-amber-600 dark:text-amber-400 mr-1.5"></i>電商 SEO/EDM</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-amber-100/70 dark:bg-amber-900/30 border border-amber-200/80 dark:border-amber-800/40"><i class="fa-solid fa-check text-amber-600 dark:text-amber-400 mr-1.5"></i>跨境金流整合</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-amber-100/70 dark:bg-amber-900/30 border border-amber-200/80 dark:border-amber-800/40"><i class="fa-solid fa-check text-amber-600 dark:text-amber-400 mr-1.5"></i>科技/金融高階英文培訓</span>
+                        </div>
+                    </div>
+
+                    <!-- Profile Hero Card -->
+                    <div class="lg:col-span-5 flex justify-center">
+                        <div class="relative w-full max-w-md">
+                            <div class="absolute -inset-1 rounded-3xl bg-gradient-to-r from-amber-400 to-rose-400 opacity-25 dark:opacity-35 blur-xl"></div>
+                            
+                            <div class="relative rounded-2xl glass-panel p-6 sm:p-8 space-y-6">
+                                <div class="flex items-center gap-4">
+                                    <div class="relative">
+                                        <img src="https://duk.tw/ozJe00.jpg" onerror="this.onerror=null; this.src='https://placehold.co/200x200/d97706/ffffff?text=Avatar';" alt="個人大頭照" class="w-20 h-20 sm:w-22 sm:h-22 rounded-2xl object-cover border-2 border-amber-400 dark:border-amber-500 shadow-md shadow-amber-500/20">
+                                        <span class="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 border-2 border-white dark:border-stone-900 rounded-full flex items-center justify-center text-[10px] text-white" title="在線諮詢">
+                                            <i class="fa-solid fa-check"></i>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <h2 class="text-xl font-bold text-stone-900 dark:text-stone-100">專業資歷總覽</h2>
+                                        <p class="text-xs text-amber-700 dark:text-amber-400 font-bold">Cross-Functional Professional</p>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-3.5 border-y border-amber-200/60 dark:border-amber-900/40 py-4">
+                                    <div class="flex justify-between items-center text-sm">
+                                        <span class="text-stone-600 dark:text-stone-300 font-medium"><i class="fa-solid fa-globe w-5 text-amber-600 dark:text-amber-400"></i> 海外市場開發</span>
+                                        <span class="text-stone-900 dark:text-stone-100 font-semibold">Leads 數據分析與追蹤</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm">
+                                        <span class="text-stone-600 dark:text-stone-300 font-medium"><i class="fa-solid fa-chart-line w-5 text-orange-600 dark:text-orange-400"></i> 行銷成效</span>
+                                        <span class="text-stone-900 dark:text-stone-100 font-semibold">整體業績提升 30%</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm">
+                                        <span class="text-stone-600 dark:text-stone-300 font-medium"><i class="fa-solid fa-graduation-cap w-5 text-rose-600 dark:text-rose-400"></i> 客製化教學</span>
+                                        <span class="text-stone-900 dark:text-stone-100 font-semibold">科技界 / 金融界 專屬課程</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm">
+                                        <span class="text-stone-600 dark:text-stone-300 font-medium"><i class="fa-solid fa-credit-card w-5 text-amber-700 dark:text-amber-400"></i> 多元金流經驗</span>
+                                        <span class="text-stone-900 dark:text-stone-100 font-semibold">PayPal / 微信 / 支付寶</span>
+                                    </div>
+                                </div>
+
+                                <div class="bg-amber-100/60 dark:bg-amber-950/40 rounded-xl p-4 border border-amber-200/80 dark:border-amber-900/50 text-xs text-stone-700 dark:text-stone-300 space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-bold text-stone-800 dark:text-stone-200">語言能力 (Language)</span>
+                                        <span class="text-amber-800 dark:text-amber-300 font-semibold">精通 (Listening/Speaking/Reading/Writing)</span>
+                                    </div>
+                                    <div class="w-full bg-amber-200/60 dark:bg-stone-800 h-2.5 rounded-full overflow-hidden">
+                                        <div class="gradient-bg h-full w-[95%]"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section id="highlights" class="py-16 bg-amber-100/40 dark:bg-stone-900/50 border-y border-amber-200/60 dark:border-amber-900/30">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-8">
+                    <span class="text-xs font-bold tracking-widest text-amber-700 dark:text-amber-400 uppercase">Key Achievements</span>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-stone-900 dark:text-stone-100 mt-1">關鍵成效亮點 (點擊卡片查看細節)</h2>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    
+                    <div onclick="openHighlightModal(1)" class="p-6 rounded-2xl glass-panel glass-panel-hover text-center cursor-pointer group relative overflow-hidden">
+                        <div class="text-3xl sm:text-4xl font-extrabold gradient-text mb-2">1,000+</div>
+                        <div class="text-sm text-stone-800 dark:text-stone-200 font-bold">客戶關係良好維繫</div>
+                        <p class="text-xs text-stone-500 dark:text-stone-400 mt-1">積極聆聽與細緻售後服務</p>
+                        <div class="mt-4 pt-3 border-t border-amber-200/50 dark:border-amber-900/30 text-xs text-amber-700 dark:text-amber-400 font-semibold flex items-center justify-center gap-1 group-hover:underline">
+                            <span>查看詳細紀錄</span>
+                            <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                        </div>
+                    </div>
+
+                    <div onclick="openHighlightModal(2)" class="p-6 rounded-2xl glass-panel glass-panel-hover text-center cursor-pointer group relative overflow-hidden">
+                        <div class="text-3xl sm:text-4xl font-extrabold gradient-text mb-2">+30%</div>
+                        <div class="text-sm text-stone-800 dark:text-stone-200 font-bold">影音產品整體業績成長</div>
+                        <p class="text-xs text-stone-500 dark:text-stone-400 mt-1">整合 SEO、EDM 與內容行銷</p>
+                        <div class="mt-4 pt-3 border-t border-amber-200/50 dark:border-amber-900/30 text-xs text-amber-700 dark:text-amber-400 font-semibold flex items-center justify-center gap-1 group-hover:underline">
+                            <span>查看策略與成效</span>
+                            <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                        </div>
+                    </div>
+
+                    <div onclick="openHighlightModal(3)" class="p-6 rounded-2xl glass-panel glass-panel-hover text-center cursor-pointer group relative overflow-hidden">
+                        <div class="text-3xl sm:text-4xl font-extrabold gradient-text mb-2">10,000+</div>
+                        <div class="text-sm text-stone-800 dark:text-stone-200 font-bold">社群粉絲經營聲量</div>
+                        <p class="text-xs text-stone-500 dark:text-stone-400 mt-1">短影音拍攝與精準廣告投放</p>
+                        <div class="mt-4 pt-3 border-t border-amber-200/50 dark:border-amber-900/30 text-xs text-amber-700 dark:text-amber-400 font-semibold flex items-center justify-center gap-1 group-hover:underline">
+                            <span>查看短影音亮點</span>
+                            <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                        </div>
+                    </div>
+
+                    <div onclick="openHighlightModal(4)" class="p-6 rounded-2xl glass-panel glass-panel-hover text-center cursor-pointer group relative overflow-hidden">
+                        <div class="text-3xl sm:text-4xl font-extrabold gradient-text mb-2">100%</div>
+                        <div class="text-sm text-stone-800 dark:text-stone-200 font-bold">高階客製課程滿意度</div>
+                        <p class="text-xs text-stone-500 dark:text-stone-400 mt-1">深耕科技與金融菁英教案</p>
+                        <div class="mt-4 pt-3 border-t border-amber-200/50 dark:border-amber-900/30 text-xs text-amber-700 dark:text-amber-400 font-semibold flex items-center justify-center gap-1 group-hover:underline">
+                            <span>查看客製化教案</span>
+                            <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section id="experience" class="py-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="text-xs font-bold tracking-widest text-amber-700 dark:text-amber-400 uppercase mb-2">Work & Expertise</h2>
+                    <p class="text-3xl sm:text-4xl font-bold text-stone-900 dark:text-stone-100">四大專業領域職涯經歷</p>
+                    <p class="text-stone-600 dark:text-stone-300 mt-3 font-medium">點擊各區塊可展開完整專案經歷與核心能力分析。</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    
+                    <!-- Role 1: Sales & Customer Service -->
+                    <div onclick="openExperienceModal(1)" class="glass-panel glass-panel-hover rounded-2xl p-6 sm:p-8 flex flex-col justify-between cursor-pointer relative overflow-hidden group border border-amber-200/60 dark:border-amber-900/40">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-amber-400/15 rounded-full blur-2xl group-hover:bg-amber-400/25 transition-all"></div>
+                        <div>
+                            <div class="flex items-center justify-between mb-6">
+                                <div class="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-900/50 border border-amber-300/50 dark:border-amber-700/50 text-amber-700 dark:text-amber-300 flex items-center justify-center text-xl font-bold">
+                                    <i class="fa-solid fa-headset"></i>
+                                </div>
+                                <span class="px-3 py-1 rounded-full bg-amber-100/80 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 text-xs font-bold text-amber-800 dark:text-amber-300">
+                                    深耕客戶關係
+                                </span>
+                            </div>
+                            
+                            <h3 class="text-xl font-bold text-stone-900 dark:text-stone-100 mb-2 group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors flex items-center justify-between">
+                                <span>1. 業務行銷客服人員</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-sm opacity-60 group-hover:opacity-100 transition-opacity"></i>
+                            </h3>
+                            <p class="text-xs text-amber-700 dark:text-amber-400 font-semibold mb-4">電腦文書處理精熟 / 全方位溝通專才</p>
+
+                            <ul class="space-y-3 text-sm text-stone-700 dark:text-stone-300 mb-6">
+                                <li class="flex items-start gap-2.5">
+                                    <i class="fa-solid fa-circle-check text-amber-600 dark:text-amber-400 mt-1 text-xs"></i>
+                                    <span><strong>客戶關係經營：</strong>維繫超過 <span class="text-stone-900 dark:text-stone-100 font-bold">1,000 位客戶</span>，定期聯繫互動，熟習文字與電話客服模式。</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i class="fa-solid fa-circle-check text-amber-600 dark:text-amber-400 mt-1 text-xs"></i>
+                                    <span><strong>細緻售後服務：</strong>積極聆聽客戶需求，專注細節，提供精準產品諮詢與故障排除。</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i class="fa-solid fa-circle-check text-amber-600 dark:text-amber-400 mt-1 text-xs"></i>
+                                    <span><strong>商品解說與培訓：</strong>主導產品特色介紹、操作簡報與客戶教育訓練指導。</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i class="fa-solid fa-circle-check text-amber-600 dark:text-amber-400 mt-1 text-xs"></i>
+                                    <span><strong>跨國金流處理：</strong>具備微信支付、支付寶、PayPal 及信用卡金流開通與接洽實戰經驗。</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="pt-4 border-t border-amber-200/60 dark:border-amber-900/40 flex items-center justify-between">
+                            <div class="flex flex-wrap gap-2">
+                                <span class="text-xs px-2.5 py-1 rounded bg-amber-100/70 dark:bg-amber-950/50 border border-amber-200/60 dark:border-amber-900/50 text-amber-900 dark:text-amber-300 font-medium">CRM 顧客關係</span>
+                                <span class="text-xs px-2.5 py-1 rounded bg-amber-100/70 dark:bg-amber-950/50 border border-amber-200/60 dark:border-amber-900/50 text-amber-900 dark:text-amber-300 font-medium">多元金流接洽</span>
+                            </div>
+                            <span class="text-xs text-amber-700 dark:text-amber-400 font-bold group-hover:translate-x-1 transition-transform">點擊查看詳情 &rarr;</span>
+                        </div>
+                    </div>
+
+                    <!-- Role 2: E-commerce & Video Product Marketing -->
+                    <div onclick="openExperienceModal(2)" class="glass-panel glass-panel-hover rounded-2xl p-6 sm:p-8 flex flex-col justify-between cursor-pointer relative overflow-hidden group border border-amber-200/60 dark:border-amber-900/40">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-orange-400/15 rounded-full blur-2xl group-hover:bg-orange-400/25 transition-all"></div>
+                        <div>
+                            <div class="flex items-center justify-between mb-6">
+                                <div class="w-12 h-12 rounded-xl bg-orange-100 dark:bg-orange-950/50 border border-orange-300/50 dark:border-orange-800/50 text-orange-700 dark:text-orange-300 flex items-center justify-center text-xl font-bold">
+                                    <i class="fa-solid fa-bullhorn"></i>
+                                </div>
+                                <span class="px-3 py-1 rounded-full bg-orange-100/80 dark:bg-orange-950/60 border border-orange-200 dark:border-orange-800 text-xs font-bold text-orange-800 dark:text-orange-300">
+                                    業績成長 +30%
+                                </span>
+                            </div>
+                            
+                            <h3 class="text-xl font-bold text-stone-900 dark:text-stone-100 mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors flex items-center justify-between">
+                                <span>2. 網路行銷與影音產品營運</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-sm opacity-60 group-hover:opacity-100 transition-opacity"></i>
+                            </h3>
+                            <p class="text-xs text-orange-700 dark:text-orange-400 font-semibold mb-4">電商平台架設 / 多元數位行銷策劃</p>
+
+                            <ul class="space-y-3 text-sm text-stone-700 dark:text-stone-300 mb-6">
+                                <li class="flex items-start gap-2.5">
+                                    <i class="fa-solid fa-circle-check text-orange-600 dark:text-orange-400 mt-1 text-xs"></i>
+                                    <span><strong>電商平台架設營運：</strong>使用主流網站架構搭建購物官網，持續輸出優質語言學習內容。</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i class="fa-solid fa-circle-check text-orange-600 dark:text-orange-400 mt-1 text-xs"></i>
+                                    <span><strong>全方位整合行銷：</strong>操作 SEO 關鍵字優化、內容行銷、EDM 電子報、付費廣告與影音行銷。</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i class="fa-solid fa-circle-check text-orange-600 dark:text-orange-400 mt-1 text-xs"></i>
+                                    <span><strong>短影音與社群經營：</strong>親自企劃拍攝短影音，精準廣告投放，成功打造 <span class="text-stone-900 dark:text-stone-100 font-bold">10,000+ 粉絲社群</span>。</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i class="fa-solid fa-circle-check text-orange-600 dark:text-orange-400 mt-1 text-xs"></i>
+                                    <span><strong>第三方平台渠道拓展：</strong>佈局第三方通路販售出版品與影音課程，帶動整體業績大幅成長 30%。</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="pt-4 border-t border-amber-200/60 dark:border-amber-900/40 flex items-center justify-between">
+                            <div class="flex flex-wrap gap-2">
+                                <span class="text-xs px-2.5 py-1 rounded bg-orange-100/70 dark:bg-orange-950/50 border border-orange-200/60 dark:border-orange-900/50 text-orange-900 dark:text-orange-300 font-medium">SEO 優化</span>
+                                <span class="text-xs px-2.5 py-1 rounded bg-orange-100/70 dark:bg-orange-950/50 border border-orange-200/60 dark:border-orange-900/50 text-orange-900 dark:text-orange-300 font-medium">短影音剪輯</span>
+                            </div>
+                            <span class="text-xs text-orange-700 dark:text-orange-400 font-bold group-hover:translate-x-1 transition-transform">點擊查看詳情 &rarr;</span>
+                        </div>
+                    </div>
+
+                    <!-- Role 3: Senior English Instructor -->
+                    <div onclick="openExperienceModal(3)" class="glass-panel glass-panel-hover rounded-2xl p-6 sm:p-8 flex flex-col justify-between cursor-pointer relative overflow-hidden group border border-amber-200/60 dark:border-amber-900/40">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-rose-400/15 rounded-full blur-2xl group-hover:bg-rose-400/25 transition-all"></div>
+                        <div>
+                            <div class="flex items-center justify-between mb-6">
+                                <div class="w-12 h-12 rounded-xl bg-rose-100 dark:bg-rose-950/50 border border-rose-300/50 dark:border-rose-800/50 text-rose-700 dark:text-rose-300 flex items-center justify-center text-xl font-bold">
+                                    <i class="fa-solid fa-language"></i>
+                                </div>
+                                <span class="px-3 py-1 rounded-full bg-rose-100/80 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 text-xs font-bold text-rose-800 dark:text-rose-300">
+                                    知名機構專任
+                                </span>
+                            </div>
+                            
+                            <h3 class="text-xl font-bold text-stone-900 dark:text-stone-100 mb-2 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors flex items-center justify-between">
+                                <span>3. 知名英文機構客製化講師</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-sm opacity-60 group-hover:opacity-100 transition-opacity"></i>
+                            </h3>
+                            <p class="text-xs text-rose-700 dark:text-rose-400 font-semibold mb-4">聽說讀寫精通 / 高階商務課程設計</p>
+
+                            <ul class="space-y-3 text-sm text-stone-700 dark:text-stone-300 mb-6">
+                                <li class="flex items-start gap-2.5">
+                                    <i class="fa-solid fa-circle-check text-rose-600 dark:text-rose-400 mt-1 text-xs"></i>
+                                    <span><strong>專業客製化培訓：</strong>精準分析學生與社會人士需求，專為<span class="text-stone-900 dark:text-stone-100 font-bold">科技界與金融界高階客戶</span>打造個人專屬英文課程。</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i class="fa-solid fa-circle-check text-rose-600 dark:text-rose-400 mt-1 text-xs"></i>
+                                    <span><strong>教案研發與簡報：</strong>獨立設計系統化課程、編纂專屬教材教案、製作簡報並親自授課。</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i class="fa-solid fa-circle-check text-rose-600 dark:text-rose-400 mt-1 text-xs"></i>
+                                    <span><strong>課程文案撰寫：</strong>為客戶量身打造個人專屬英文文案與學習地圖，展現極致專業服務。</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i class="fa-solid fa-circle-check text-rose-600 dark:text-rose-400 mt-1 text-xs"></i>
+                                    <span><strong>成效導向指導：</strong>動態調整教學脈絡，針對痛點各別突破，極大化提升學員學習效果。</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="pt-4 border-t border-amber-200/60 dark:border-amber-900/40 flex items-center justify-between">
+                            <div class="flex flex-wrap gap-2">
+                                <span class="text-xs px-2.5 py-1 rounded bg-rose-100/70 dark:bg-rose-950/50 border border-rose-200/60 dark:border-rose-900/50 text-rose-900 dark:text-rose-300 font-medium">科技/金融商務英文</span>
+                                <span class="text-xs px-2.5 py-1 rounded bg-rose-100/70 dark:bg-rose-950/50 border border-rose-200/60 dark:border-rose-900/50 text-rose-900 dark:text-rose-300 font-medium">教案開發</span>
+                            </div>
+                            <span class="text-xs text-rose-700 dark:text-rose-400 font-bold group-hover:translate-x-1 transition-transform">點擊查看詳情 &rarr;</span>
+                        </div>
+                    </div>
+
+                    <!-- Role 4: Overseas Dept Assistant -->
+                    <div onclick="openExperienceModal(4)" class="glass-panel glass-panel-hover rounded-2xl p-6 sm:p-8 flex flex-col justify-between cursor-pointer relative overflow-hidden group border border-amber-200/60 dark:border-amber-900/40">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/15 rounded-full blur-2xl group-hover:bg-amber-500/25 transition-all"></div>
+                        <div>
+                            <div class="flex items-center justify-between mb-6">
+                                <div class="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-950/50 border border-amber-300/50 dark:border-amber-800/50 text-amber-800 dark:text-amber-300 flex items-center justify-center text-xl font-bold">
+                                    <i class="fa-solid fa-earth-americas"></i>
+                                </div>
+                                <span class="px-3 py-1 rounded-full bg-amber-100/80 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 text-xs font-bold text-amber-900 dark:text-amber-300">
+                                    科技業國外部
+                                </span>
+                            </div>
+                            
+                            <h3 class="text-xl font-bold text-stone-900 dark:text-stone-100 mb-2 group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors flex items-center justify-between">
+                                <span>4. 科技公司國外部助理</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-sm opacity-60 group-hover:opacity-100 transition-opacity"></i>
+                            </h3>
+                            <p class="text-xs text-amber-800 dark:text-amber-400 font-semibold mb-4">跨境商務溝通 / 海外潛力客戶開發</p>
+
+                            <ul class="space-y-3 text-sm text-stone-700 dark:text-stone-300 mb-6">
+                                <li class="flex items-start gap-2.5">
+                                    <i class="fa-solid fa-circle-check text-amber-700 dark:text-amber-400 mt-1 text-xs"></i>
+                                    <span><strong>海外 Leads 開發：</strong>主導海外目標市場數據庫搜尋，積極開發潛力 B2B 客戶並維持良好對接。</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i class="fa-solid fa-circle-check text-amber-700 dark:text-amber-400 mt-1 text-xs"></i>
+                                    <span><strong>文書與數據圖表：</strong>高效處理國際商業文件、擬定英文書信、製作精準業務統計數據圖表。</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i class="fa-solid fa-circle-check text-amber-700 dark:text-amber-400 mt-1 text-xs"></i>
+                                    <span><strong>跨部門會議專案：</strong>參與專案會議撰寫英文/中文紀錄，精準追蹤內部各單位專案進度與交期。</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i class="fa-solid fa-circle-check text-amber-700 dark:text-amber-400 mt-1 text-xs"></i>
+                                    <span><strong>供應商與行政整合：</strong>彙整國際供應商資料，即時協調客戶端與業務端的行政需求。</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="pt-4 border-t border-amber-200/60 dark:border-amber-900/40 flex items-center justify-between">
+                            <div class="flex flex-wrap gap-2">
+                                <span class="text-xs px-2.5 py-1 rounded bg-amber-100/70 dark:bg-amber-950/50 border border-amber-200/60 dark:border-amber-900/50 text-amber-900 dark:text-amber-300 font-medium">海外 Leads 開發</span>
+                                <span class="text-xs px-2.5 py-1 rounded bg-amber-100/70 dark:bg-amber-950/50 border border-amber-200/60 dark:border-amber-900/50 text-amber-900 dark:text-amber-300 font-medium">專案交期追蹤</span>
+                            </div>
+                            <span class="text-xs text-amber-700 dark:text-amber-400 font-bold group-hover:translate-x-1 transition-transform">點擊查看詳情 &rarr;</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section id="skills" class="py-16 bg-amber-100/30 dark:bg-stone-900/40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-2xl mx-auto mb-12">
+                    <h2 class="text-xs font-bold tracking-widest text-amber-700 dark:text-amber-400 uppercase mb-2">Competencies</h2>
+                    <p class="text-2xl sm:text-3xl font-bold text-stone-900 dark:text-stone-100">核心技能與工具矩陣 (點擊深入了解)</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Column 1: Marketing & E-Commerce -->
+                    <div onclick="openSkillModal(1)" class="glass-panel glass-panel-hover p-6 rounded-2xl cursor-pointer group">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3 text-amber-700 dark:text-amber-400">
+                                <i class="fa-solid fa-chart-pie text-xl"></i>
+                                <h3 class="font-bold text-stone-900 dark:text-stone-100 group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors">數位行銷與電商營運</h3>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-xs text-stone-400 group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1.5 rounded-lg bg-white dark:bg-stone-800 text-xs border border-amber-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 font-medium shadow-sm">SEO 關鍵字優化</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-white dark:bg-stone-800 text-xs border border-amber-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 font-medium shadow-sm">內容式行銷 (Content)</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-white dark:bg-stone-800 text-xs border border-amber-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 font-medium shadow-sm">EDM 電子報行銷</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-white dark:bg-stone-800 text-xs border border-amber-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 font-medium shadow-sm">付費廣告投放</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-white dark:bg-stone-800 text-xs border border-amber-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 font-medium shadow-sm">短影音腳本與拍攝</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-white dark:bg-stone-800 text-xs border border-amber-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 font-medium shadow-sm">電商平台建置</span>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: CRM & Global Business -->
+                    <div onclick="openSkillModal(2)" class="glass-panel glass-panel-hover p-6 rounded-2xl cursor-pointer group">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3 text-orange-700 dark:text-orange-400">
+                                <i class="fa-solid fa-handshake text-xl"></i>
+                                <h3 class="font-bold text-stone-900 dark:text-stone-100 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">客戶關係與跨境商務</h3>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-xs text-stone-400 group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1.5 rounded-lg bg-white dark:bg-stone-800 text-xs border border-amber-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 font-medium shadow-sm">1000+ 顧客CRM經營</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-white dark:bg-stone-800 text-xs border border-amber-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 font-medium shadow-sm">海外 Leads 開發</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-white dark:bg-stone-800 text-xs border border-amber-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 font-medium shadow-sm">PayPal 支付對接</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-white dark:bg-stone-800 text-xs border border-amber-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 font-medium shadow-sm">微信支付 / 支付寶</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-white dark:bg-stone-800 text-xs border border-amber-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 font-medium shadow-sm">信用卡跨境金流</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-white dark:bg-stone-800 text-xs border border-amber-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 font-medium shadow-sm">跨部門會議紀錄</span>
+                        </div>
+                    </div>
+
+                    <!-- Column 3: Language & Course Design -->
+                    <div onclick="openSkillModal(3)" class="glass-panel glass-panel-hover p-6 rounded-2xl cursor-pointer group">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3 text-rose-700 dark:text-rose-400">
+                                <i class="fa-solid fa-graduation-cap text-xl"></i>
+                                <h3 class="font-bold text-stone-900 dark:text-stone-100 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">英文培訓與簡報教學</h3>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-xs text-stone-400 group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1.5 rounded-lg bg-white dark:bg-stone-800 text-xs border border-amber-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 font-medium shadow-sm">英語聽說讀寫精通</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-white dark:bg-stone-800 text-xs border border-amber-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 font-medium shadow-sm">科技界專屬英文教案</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-white dark:bg-stone-800 text-xs border border-amber-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 font-medium shadow-sm">金融界客製化培訓</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-white dark:bg-stone-800 text-xs border border-amber-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 font-medium shadow-sm">教學簡報製作</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-white dark:bg-stone-800 text-xs border border-amber-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 font-medium shadow-sm">課程專屬文案撰寫</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="py-20 relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                    
+                    <div class="lg:col-span-5 space-y-6">
+                        <h2 class="text-xs font-bold tracking-widest text-amber-700 dark:text-amber-400 uppercase">Contact Me</h2>
+                        <h3 class="text-3xl sm:text-4xl font-bold text-stone-900 dark:text-stone-100">啟動合作計畫 <br>期待與您的團隊交流</h3>
+                        <p class="text-stone-600 dark:text-stone-300 leading-relaxed text-sm font-medium">
+                            無論是跨境業務開發、數位行銷專案，或是企業高階英文客製化培訓需求，都歡迎與我取得聯繫。
+                        </p>
+
+                        <div class="space-y-4 pt-4">
+                            <div class="flex items-center gap-4 p-3.5 rounded-xl glass-panel shadow-sm">
+                                <div class="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 flex items-center justify-center">
+                                    <i class="fa-solid fa-envelope"></i>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-stone-500 dark:text-stone-400 font-medium">電子信箱</div>
+                                    <div class="text-sm font-bold text-stone-900 dark:text-stone-100">your.email@example.com</div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-4 p-3.5 rounded-xl glass-panel shadow-sm">
+                                <div class="w-10 h-10 rounded-lg bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300 flex items-center justify-center">
+                                    <i class="fa-solid fa-phone"></i>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-stone-500 dark:text-stone-400 font-medium">聯絡電話</div>
+                                    <div class="text-sm font-bold text-stone-900 dark:text-stone-100">+886 912-345-678</div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-4 p-3.5 rounded-xl glass-panel shadow-sm">
+                                <div class="w-10 h-10 rounded-lg bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300 flex items-center justify-center">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-stone-500 dark:text-stone-400 font-medium">目前服務地點</div>
+                                    <div class="text-sm font-bold text-stone-900 dark:text-stone-100">台灣 (可支援 Remote / 遠端跨國協作)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Contact Form -->
+                    <div class="lg:col-span-7">
+                        <div class="glass-panel p-6 sm:p-10 rounded-3xl border border-amber-200/80 dark:border-amber-900/50 shadow-xl relative">
+                            <form id="contact-form" class="space-y-5" onsubmit="handleFormSubmit(event)">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                    <div>
+                                        <label class="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-2">您的姓名 *</label>
+                                        <input type="text" required placeholder="例如：張先生 / Ms. Chen" class="w-full px-4 py-3 rounded-xl bg-white dark:bg-stone-900/80 border border-stone-300 dark:border-stone-700 text-stone-900 dark:text-stone-100 placeholder-stone-400 dark:placeholder-stone-500 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 text-sm shadow-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-2">您的 Email *</label>
+                                        <input type="email" required placeholder="name@company.com" class="w-full px-4 py-3 rounded-xl bg-white dark:bg-stone-900/80 border border-stone-300 dark:border-stone-700 text-stone-900 dark:text-stone-100 placeholder-stone-400 dark:placeholder-stone-500 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 text-sm shadow-sm">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-2">諮詢或合作項目</label>
+                                    <select class="w-full px-4 py-3 rounded-xl bg-white dark:bg-stone-900/80 border border-stone-300 dark:border-stone-700 text-stone-900 dark:text-stone-100 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 text-sm shadow-sm">
+                                        <option value="行銷客服">業務行銷與顧客關係 (CRM / 金流對接)</option>
+                                        <option value="電商行銷">電商平台架設 / 影音行銷 / SEO</option>
+                                        <option value="英文培訓">科技 / 金融客製化英文課程授課</option>
+                                        <option value="跨境開發">國外部助理 / 海外 Leads 市場開發</option>
+                                        <option value="其他合作">其他綜合專案合作</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-2">訊息內容 *</label>
+                                    <textarea rows="4" required placeholder="請簡述您的專案需求、合作想法或預計時間..." class="w-full px-4 py-3 rounded-xl bg-white dark:bg-stone-900/80 border border-stone-300 dark:border-stone-700 text-stone-900 dark:text-stone-100 placeholder-stone-400 dark:placeholder-stone-500 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 text-sm shadow-sm resize-none"></textarea>
+                                </div>
+
+                                <button type="submit" class="w-full py-4 rounded-xl gradient-bg text-white font-bold text-sm tracking-wide hover:opacity-95 transition-all shadow-lg shadow-amber-500/25 flex items-center justify-center gap-2">
+                                    <i class="fa-regular fa-paper-plane"></i>
+                                    <span>送出合作諮詢訊息</span>
+                                </button>
+                            </form>
+
+                            <!-- Success Toast / Message Container -->
+                            <div id="form-success" class="hidden absolute inset-0 bg-amber-50/95 dark:bg-stone-900/95 rounded-3xl p-8 flex flex-col items-center justify-center text-center space-y-4">
+                                <div class="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-3xl shadow-sm">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold text-stone-900 dark:text-stone-100">訊息已成功寄出！</h3>
+                                <p class="text-sm text-stone-600 dark:text-stone-300 max-w-md font-medium">感謝您的聯繫！我將在收到訊息後的 24 小時內儘快回覆您。</p>
+                                <button onclick="resetForm()" class="px-6 py-2.5 rounded-xl bg-stone-800 dark:bg-amber-600 hover:bg-stone-900 text-white text-xs font-semibold shadow-md">發送另一則訊息</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="detail-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-md transition-all duration-300">
+        <div class="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto glass-panel p-6 sm:p-8 rounded-3xl border border-amber-300/80 dark:border-amber-700/60 shadow-2xl space-y-6">
+            <!-- Modal Header -->
+            <div class="flex items-start justify-between border-b border-amber-200/60 dark:border-amber-900/40 pb-4">
+                <div>
+                    <span id="modal-badge" class="px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 text-xs font-bold">
+                        細節說明
+                    </span>
+                    <h3 id="modal-title" class="text-2xl font-extrabold text-stone-900 dark:text-stone-100 mt-2">
+                        標題內容
+                    </h3>
+                    <p id="modal-subtitle" class="text-xs text-amber-700 dark:text-amber-400 font-semibold mt-0.5">
+                        副標題與細節分類
+                    </p>
+                </div>
+                <button onclick="closeModal()" class="w-9 h-9 rounded-full bg-stone-200/80 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-amber-200 dark:hover:bg-stone-700 flex items-center justify-center text-sm transition-colors">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content Body -->
+            <div id="modal-body" class="space-y-4 text-sm text-stone-700 dark:text-stone-300 leading-relaxed font-medium">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="pt-4 border-t border-amber-200/60 dark:border-amber-900/40 flex justify-end">
+                <button onclick="closeModal()" class="px-6 py-2.5 rounded-xl gradient-bg text-white font-bold text-xs shadow-md hover:opacity-90 transition-opacity">
+                    關閉視窗
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile Drawer Toggle
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Background Audio Controls
+        const bgAudio = document.getElementById('bg-music');
+        let isPlaying = false;
+
+        function updateMusicUI() {
+            const navText = document.getElementById('nav-music-text');
+            const navWave = document.getElementById('nav-wave-box');
+            const navIcon = document.getElementById('nav-music-icon');
+            const floatIcon = document.getElementById('float-music-icon');
+            const mobileText = document.getElementById('mobile-music-text');
+
+            if (isPlaying) {
+                if (navText) navText.innerText = "音樂 ON";
+                if (navWave) navWave.classList.remove('hidden');
+                if (navIcon) navIcon.className = "fa-solid fa-volume-high text-amber-600 dark:text-amber-400";
+                if (floatIcon) floatIcon.className = "fa-solid fa-compact-disc animate-spin";
+                if (mobileText) mobileText.innerText = "切換背景音樂 (目前 ON)";
+            } else {
+                if (navText) navText.innerText = "背景音樂 OFF";
+                if (navWave) navWave.classList.add('hidden');
+                if (navIcon) navIcon.className = "fa-solid fa-music";
+                if (floatIcon) floatIcon.className = "fa-solid fa-compact-disc";
+                if (mobileText) mobileText.innerText = "切換背景音樂 (目前 OFF)";
+            }
+        }
+
+        function toggleMusic() {
+            if (isPlaying) {
+                bgAudio.pause();
+                isPlaying = false;
+            } else {
+                bgAudio.play().then(() => {
+                    isPlaying = true;
+                }).catch(err => {
+                    console.log("Autoplay blocked or audio load error:", err);
+                });
+            }
+            updateMusicUI();
+        }
+
+        // Dark / Light Theme Toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            const themeIconMobile = document.getElementById('theme-icon-mobile');
+
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                if (themeIcon) themeIcon.className = "fa-solid fa-moon";
+                if (themeIconMobile) themeIconMobile.className = "fa-solid fa-moon";
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                if (themeIcon) themeIcon.className = "fa-solid fa-sun text-amber-400";
+                if (themeIconMobile) themeIconMobile.className = "fa-solid fa-sun text-amber-400";
+            }
+        }
+
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+            const themeIcon = document.getElementById('theme-icon');
+            const themeIconMobile = document.getElementById('theme-icon-mobile');
+            if (themeIcon) themeIcon.className = "fa-solid fa-sun text-amber-400";
+            if (themeIconMobile) themeIconMobile.className = "fa-solid fa-sun text-amber-400";
+        }
+
+        // Modal Functionality for "點進去都可以看"
+        const modal = document.getElementById('detail-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalSubtitle = document.getElementById('modal-subtitle');
+        const modalBadge = document.getElementById('modal-badge');
+        const modalBody = document.getElementById('modal-body');
+
+        function openModal(title, subtitle, badgeText, contentHtml) {
+            modalTitle.innerText = title;
+            modalSubtitle.innerText = subtitle;
+            modalBadge.innerText = badgeText;
+            modalBody.innerHTML = contentHtml;
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+        }
+
+        // Close Modal when clicking outside box
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Detail Data Popups
+        function openAboutDetail() {
+            openModal(
+                '關於我 - 全方位職涯簡介',
+                '個人優勢與跨領域整合特質',
+                '個人簡介',
+                `
+                <div class="space-y-4">
+                    <p>您好！我是一位具備<strong>跨境商務溝通、數位行銷營運、客製化高階英文培訓與 CRM 顧客關係管理</strong>的全方位跨域人才。</p>
+                    <div class="bg-amber-100/60 dark:bg-amber-950/40 p-4 rounded-xl border border-amber-200/80 dark:border-amber-900/50 space-y-2">
+                        <h4 class="font-bold text-amber-900 dark:text-amber-300"><i class="fa-solid fa-star mr-1"></i> 核心優勢總結：</h4>
+                        <ul class="list-disc list-inside space-y-1 text-xs text-stone-700 dark:text-stone-300">
+                            <li><strong>極佳語文能力：</strong>英文聽說讀寫流利精通，具備與全球客戶及高階高管溝通授課能力。</li>
+                            <li><strong>實戰成效導向：</strong>擅長使用 SEO、EDM、短影音與社群廣告，帶動產品業績大幅成長 30%。</li>
+                            <li><strong>深厚 CRM 與金流經驗：</strong>經營超過 1,000+ 位客戶，熟練操作 PayPal、微信支付、支付寶與信用卡跨境金流。</li>
+                            <li><strong>組織與協調力：</strong>熟悉科技公司國外部 B2B Leads 開發、圖表數據製作與跨部門專案交期追蹤。</li>
+                        </ul>
+                    </div>
+                </div>
+                `
+            );
+        }
+
+        function openHighlightModal(type) {
+            if (type === 1) {
+                openModal(
+                    '1,000+ 客戶關係良好維繫',
+                    'CRM 顧客關係經營與售後體驗',
+                    '關鍵成效',
+                    `
+                    <p>在業務行銷與客服營運過程中，我深知客戶滿意度是品牌持續成長的核心：</p>
+                    <ul class="space-y-2.5">
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-amber-600 mt-1"></i> <strong>高黏著度客服：</strong>維繫超過 1000 位 VIP 與一般客戶，建立高信任度的定期互動機制。</li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-amber-600 mt-1"></i> <strong>問題快速排除：</strong>熟習文字客服與電話客服，專注細節，第一時間解決產品使用痛點與客訴。</li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-amber-600 mt-1"></i> <strong>產品訓練與說明：</strong>製作簡易清晰的指導教案，引導客戶順暢上手產品。</li>
+                    </ul>
+                    `
+                );
+            } else if (type === 2) {
+                openModal(
+                    '整體業績大幅提升 +30%',
+                    '網路行銷與影音產品整體營運成效',
+                    '關鍵成效',
+                    `
+                    <p>透過全方位的數位行銷漏斗與多管道通路策略，達成亮眼的商業成長：</p>
+                    <ul class="space-y-2.5">
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-orange-600 mt-1"></i> <strong>官網電商平台架設：</strong>搭建語言學習影音購物網站，持續輸出高品質 SEO 內容。</li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-orange-600 mt-1"></i> <strong>整合行銷策略：</strong>結合內容行銷、EDM 電子報推播與關鍵字廣告，極大化曝光率。</li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-orange-600 mt-1"></i> <strong>通路拓展：</strong>上架第三方網路平台販售語言書籍與影音商品，驅動總業績成長 30%。</li>
+                    </ul>
+                    `
+                );
+            } else if (type === 3) {
+                openModal(
+                    '10,000+ 社群粉絲聲量累積',
+                    '短影音拍攝與社群廣告投放',
+                    '關鍵成效',
+                    `
+                    <p>精準鎖定目標客群喜好，透過視覺化影音 content 打造強大社群聲量：</p>
+                    <ul class="space-y-2.5">
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-amber-600 mt-1"></i> <strong>短影音企劃與拍攝：</strong>親自撰寫腳本、拍攝並剪輯生活化且具高價值的影音影片。</li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-amber-600 mt-1"></i> <strong>廣告精準投放：</strong>分析後台受眾數據，優化廣告 ROAS，吸引優質潛力粉絲。</li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-amber-600 mt-1"></i> <strong>萬人社群經營：</strong>凝聚過萬名忠實粉絲，奠定產品轉化率與品牌信任度。</li>
+                    </ul>
+                    `
+                );
+            } else if (type === 4) {
+                openModal(
+                    '100% 高階客製課程滿意度',
+                    '科技界與金融界菁英英語培訓',
+                    '關鍵成效',
+                    `
+                    <p>為高階商務人士量身打造最接地氣且實用的頂級英文培訓：</p>
+                    <ul class="space-y-2.5">
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-rose-600 mt-1"></i> <strong>產業專屬教案：</strong>深度瞭解科技業與金融業專有名詞及簡報談判需求。</li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-rose-600 mt-1"></i> <strong>量身訂製文案：</strong>編纂專屬個人學習進度表與英語文案，顯著提升個人職場競爭力。</li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-rose-600 mt-1"></i> <strong>高滿意度口碑：</strong>獲得來自學員與企業機構的高度讚賞與續約肯定。</li>
+                    </ul>
+                    `
+                );
+            }
+        }
+
+        function openExperienceModal(index) {
+            if (index === 1) {
+                openModal(
+                    '業務行銷客服人員',
+                    '客戶關係經營與多元金流處理',
+                    '經歷 1/4',
+                    `
+                    <div class="space-y-3">
+                        <h4 class="font-bold text-stone-900 dark:text-stone-100">詳細工作職掌與成果：</h4>
+                        <p><strong>1. 電腦文書與溝通專才：</strong>精熟各式電腦辦公文書工具，具備良好條理與親和溝通力。</p>
+                        <p><strong>2. CRM 顧客維繫 (1000+ 客戶)：</strong>定期主動關懷客戶，紀錄消費偏好，維持長期高忠誠度夥伴關係。</p>
+                        <p><strong>3. 售後服務與產品簡報：</strong>耐心傾聽客戶問題，進行詳細商品解說與操作教育訓練指導。</p>
+                        <p><strong>4. 跨境金流處理經驗：</strong>實際操作並熟悉微信支付、支付寶、PayPal 及國際信用卡金流接洽業務。</p>
+                    </div>
+                    `
+                );
+            } else if (index === 2) {
+                openModal(
+                    '網路行銷與影音產品營運',
+                    '電商平台建置與社群短影音爆發力',
+                    '經歷 2/4',
+                    `
+                    <div class="space-y-3">
+                        <h4 class="font-bold text-stone-900 dark:text-stone-100">詳細工作職掌與成果：</h4>
+                        <p><strong>1. 電商官網建立：</strong>負責公司語言學習影音商品之購物網站架設與維護。</p>
+                        <p><strong>2. 漏斗式數位行銷：</strong>操作 SEO 關鍵字排位、EDM 自動化電子報發送與付費搜尋廣告。</p>
+                        <p><strong>3. 短影音與萬人社群：</strong>親自設計短影音腳本、拍攝剪輯，經營擁有 10,000+ 粉絲的知名社群。</p>
+                        <p><strong>4. 業績成長 30%：</strong>開拓多管道銷售與第三方購物平台，成功提升 30% 總銷售業績。</p>
+                    </div>
+                    `
+                );
+            } else if (index === 3) {
+                openModal(
+                    '知名英文機構客製化講師',
+                    '科技與金融高階客製英語課程設計',
+                    '經歷 3/4',
+                    `
+                    <div class="space-y-3">
+                        <h4 class="font-bold text-stone-900 dark:text-stone-100">詳細工作職掌與成果：</h4>
+                        <p><strong>1. 精準需求分析：</strong>服務對象涵蓋學生至社會人士，尤以科技界與金融界高管為主。</p>
+                        <p><strong>2. 教案與簡報獨立開發：</strong>獨立編纂教材、製作授課簡報，給予學生最系統化的英語講義。</p>
+                        <p><strong>3. 個人化專屬文案：</strong>客製學員英語 Resume、Presentation 文案與個人進修計畫。</p>
+                        <p><strong>4. 聽說讀寫全面突破：</strong>針對各別弱點進行精準解講，大幅縮短學員英語學習陣痛期。</p>
+                    </div>
+                    `
+                );
+            } else if (index === 4) {
+                openModal(
+                    '科技公司國外部助理',
+                    '跨境商務溝通與國際客戶開發 (B2B)',
+                    '經歷 4/4',
+                    `
+                    <div class="space-y-3">
+                        <h4 class="font-bold text-stone-900 dark:text-stone-100">詳細工作職掌與成果：</h4>
+                        <p><strong>1. 海外 Leads 開發：</strong>運用專業資料庫與搜尋引擎，挖掘海外潛力 B2B 客戶進行初期開發。</p>
+                        <p><strong>2. 數據圖表與文件處理：</strong>製作專業英文商業書信、營運統計圖表與合約行政文件。</p>
+                        <p><strong>3. 跨部門專案與會議：</strong>參與各項英文會議、撰寫會議紀錄，嚴格控管內部研發與製造交期。</p>
+                        <p><strong>4. 供應商整合：</strong>整理維護國際供應商資料，即時協調客戶端與業務端的需求溝通。</p>
+                    </div>
+                    `
+                );
+            }
+        }
+
+        function openSkillModal(type) {
+            if (type === 1) {
+                openModal(
+                    '數位行銷與電商營運技能',
+                    'SEO / 內容 / 短影音 / EDM / 電商平台',
+                    '技能領域',
+                    `
+                    <div class="space-y-2">
+                        <p><strong>SEO 關鍵字優化：</strong>熟練長尾關鍵字佈局與內容產出，提升搜尋自然流量。</p>
+                        <p><strong>短影音拍攝剪輯：</strong>從企劃分鏡、腳本撰寫到剪輯發布一條龍完成。</p>
+                        <p><strong>電商平台維運：</strong>熟悉網站商品上架、優惠活動設計與購物體驗優化。</p>
+                        <p><strong>廣告與 EDM 推播：</strong>掌握電子報開信率優化與數位廣告投放策略。</p>
+                    </div>
+                    `
+                );
+            } else if (type === 2) {
+                openModal(
+                    '客戶關係與跨境商務技能',
+                    'CRM / 跨境金流 / 海外開發 / 專案追蹤',
+                    '技能領域',
+                    `
+                    <div class="space-y-2">
+                        <p><strong>1000+ CRM 客戶經營：</strong>以客為尊，建立高滿意度的溝通與服務體系。</p>
+                        <p><strong>多元金流實務：</strong>熟練接洽 PayPal、微信支付、支付寶與信用卡刷卡金流。</p>
+                        <p><strong>海外 Leads 挖掘：</strong>具備國際 B2B 開發能力與英文書信對接經驗。</p>
+                        <p><strong>跨部門協調：</strong>精確撰寫中英文會議紀錄，確保專案按時交付。</p>
+                    </div>
+                    `
+                );
+            } else if (type === 3) {
+                openModal(
+                    '英文培訓與簡報教學技能',
+                    '客製化教案 / 科技金融英文 / 簡報授課',
+                    '技能領域',
+                    `
+                    <div class="space-y-2">
+                        <p><strong>英語精通 (Fluent English)：</strong>聽說讀寫流利，具備雙語簡報與主持溝通實力。</p>
+                        <p><strong>高階商務英語教案：</strong>為科技與金融從業者設計符合情境的實戰課綱。</p>
+                        <p><strong>客製化學習地圖：</strong>依照學員程度撰寫專屬英文教案與文案批改。</p>
+                        <p><strong>簡報製作與講課：</strong>具備極佳控場能力與系統化教學風格。</p>
+                    </div>
+                    `
+                );
+            }
+        }
+
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            const successBox = document.getElementById('form-success');
+            successBox.classList.remove('hidden');
+        }
+
+        function resetForm() {
+            const form = document.getElementById('contact-form');
+            const successBox = document.getElementById('form-success');
+            form.reset();
+            successBox.classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
