@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>邱于紋的作品個資匿名化工具</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SheetJS for Excel and CSV processing -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Custom Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        slateDark: '#0f172a'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-white shadow-md shadow-emerald-200">
+                    <i class="fa-solid fa-user-shield text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-slate-800 tracking-tight leading-tight">邱于紋的作品個資匿名化工具</h1>
+                    <p class="text-xs text-slate-500">Automated Sensitive Data Masking & Generalization Tool</p>
+                </div>
+            </div>
+
+            <!-- Privacy Badge -->
+            <div class="hidden sm:flex items-center space-x-2 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs px-3 py-1.5 rounded-full font-medium">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <i class="fa-solid fa-lock text-emerald-600"></i>
+                <span>100% 本地端瀏覽器處理 · 資料不傳輸至伺服器</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- Progress Steps -->
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-wrap justify-between items-center gap-2 text-sm">
+            <div id="step-btn-1" class="flex items-center space-x-2 text-emerald-600 font-semibold cursor-pointer">
+                <span class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">1</span>
+                <span>上傳檔案</span>
+            </div>
+            <i class="fa-solid fa-chevron-right text-slate-300 text-xs"></i>
+            <div id="step-btn-2" class="flex items-center space-x-2 text-slate-400 font-medium">
+                <span class="w-7 h-7 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-xs font-bold">2</span>
+                <span>自動識別與規則設定</span>
+            </div>
+            <i class="fa-solid fa-chevron-right text-slate-300 text-xs"></i>
+            <div id="step-btn-3" class="flex items-center space-x-2 text-slate-400 font-medium">
+                <span class="w-7 h-7 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-xs font-bold">3</span>
+                <span>對比預覽</span>
+            </div>
+            <i class="fa-solid fa-chevron-right text-slate-300 text-xs"></i>
+            <div id="step-btn-4" class="flex items-center space-x-2 text-slate-400 font-medium">
+                <span class="w-7 h-7 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-xs font-bold">4</span>
+                <span>安全匯出</span>
+            </div>
+        </div>
+
+        <!-- Step 1: Upload Section -->
+        <section id="upload-section" class="bg-white rounded-2xl p-8 border-2 border-dashed border-slate-300 hover:border-emerald-500 transition-colors duration-200 text-center shadow-sm">
+            <div class="max-w-md mx-auto space-y-4">
+                <div class="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-2xl shadow-inner">
+                    <i class="fa-solid fa-file-excel"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">上傳您的數據檔案</h2>
+                    <p class="text-sm text-slate-500 mt-1">支援 Excel (.xlsx, .xls) 與 CSV 格式</p>
+                </div>
+
+                <div class="flex justify-center items-center gap-3">
+                    <label class="cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-5 py-2.5 rounded-xl shadow-md transition-all duration-150 inline-flex items-center space-x-2">
+                        <i class="fa-solid fa-upload"></i>
+                        <span>選擇檔案</span>
+                        <input type="file" id="file-input" accept=".xlsx, .xls, .csv" class="hidden">
+                    </label>
+                    <button id="load-sample-btn" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-4 py-2.5 rounded-xl border border-slate-300 transition-all text-sm inline-flex items-center space-x-1.5">
+                        <i class="fa-solid fa-vial text-emerald-600"></i>
+                        <span>載入示範測試資料</span>
+                    </button>
+                </div>
+
+                <p class="text-xs text-slate-400">點擊上傳或將檔案拖曳至此處 · 單一檔案建議上限 50,000 列</p>
+            </div>
+        </section>
+
+        <!-- Main Workspace (Hidden initially) -->
+        <div id="workspace-section" class="hidden space-y-6">
+
+            <!-- File Overview Banner -->
+            <div class="bg-slate-800 text-white p-4 rounded-xl flex flex-wrap items-center justify-between gap-4 shadow-md">
+                <div class="flex items-center space-x-3">
+                    <div class="p-2 bg-slate-700 rounded-lg text-emerald-400">
+                        <i class="fa-solid fa-file-csv text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-sm flex items-center gap-2">
+                            <span id="file-name-display">dataset.xlsx</span>
+                            <span id="file-size-badge" class="text-xs bg-slate-700 px-2 py-0.5 rounded text-slate-300">0 KB</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-0.5">
+                            共 <span id="total-rows-count" class="text-emerald-400 font-medium">0</span> 列數據 · 
+                            共 <span id="total-cols-count" class="text-emerald-400 font-medium">0</span> 個欄位 · 
+                            自動檢測出 <span id="sensitive-cols-count" class="text-amber-400 font-bold">0</span> 個敏感個資欄位
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-2">
+                    <button id="reupload-btn" class="text-xs text-slate-300 hover:text-white bg-slate-700 hover:bg-slate-600 px-3 py-2 rounded-lg transition">
+                        <i class="fa-solid fa-arrows-rotate mr-1"></i>重新上傳
+                    </button>
+                    <button id="apply-preset-all" class="text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-3 py-2 rounded-lg transition">
+                        <i class="fa-solid fa-wand-magic-sparkles mr-1"></i>套用預設最佳化規則
+                    </button>
+                </div>
+            </div>
+
+            <!-- Config & Rules Panel -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center flex-wrap gap-2">
+                    <div>
+                        <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-sliders text-emerald-600"></i>
+                            個資欄位自動識別與處置設定
+                        </h3>
+                        <p class="text-xs text-slate-500">系統已自動分析欄位名稱與資料內容，為您推薦適當的遮罩或泛化演算法。</p>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs">
+                        <span class="inline-flex items-center px-2 py-1 rounded bg-amber-50 text-amber-700 border border-amber-200">
+                            <i class="fa-solid fa-triangle-exclamation mr-1"></i>高敏感
+                        </span>
+                        <span class="inline-flex items-center px-2 py-1 rounded bg-blue-50 text-blue-700 border border-blue-200">
+                            <i class="fa-solid fa-circle-info mr-1"></i>中低敏感 / 一般
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Column Cards Grid -->
+                <div id="columns-config-grid" class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[500px] overflow-y-auto custom-scrollbar">
+                    <!-- Cards injected by JS -->
+                </div>
+            </div>
+
+            <!-- Data Preview & Comparison Panel -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex flex-wrap justify-between items-center gap-4">
+                    <div class="flex items-center space-x-4">
+                        <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-table text-emerald-600"></i>
+                            資料處理預覽
+                        </h3>
+                        <!-- Toggle view modes -->
+                        <div class="inline-flex rounded-lg border border-slate-200 bg-slate-100 p-0.5 text-xs font-medium">
+                            <button id="view-mode-split" class="px-3 py-1 rounded-md bg-white shadow-sm text-slate-800 font-semibold">雙欄對比</button>
+                            <button id="view-mode-anon" class="px-3 py-1 rounded-md text-slate-600 hover:text-slate-900">僅顯示脫敏結果</button>
+                            <button id="view-mode-orig" class="px-3 py-1 rounded-md text-slate-600 hover:text-slate-900">僅顯示原始數據</button>
+                        </div>
+                    </div>
+
+                    <!-- Search / Filter inside preview -->
+                    <div class="flex items-center space-x-2">
+                        <div class="relative">
+                            <input type="text" id="preview-search" placeholder="搜尋預覽數據..." class="text-xs pl-8 pr-3 py-1.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 w-44">
+                            <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2 text-slate-400 text-xs"></i>
+                        </div>
+                        <span class="text-xs text-slate-500" id="pagination-info">顯示 1 - 100 列</span>
+                    </div>
+                </div>
+
+                <!-- Interactive Table Box -->
+                <div class="overflow-x-auto max-h-[450px] custom-scrollbar">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead id="preview-table-head" class="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200 sticky top-0 z-10">
+                            <!-- Table headers dynamically generated -->
+                        </thead>
+                        <tbody id="preview-table-body" class="divide-y divide-slate-200 font-mono">
+                            <!-- Rows dynamically generated -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Export & Action Bar -->
+            <div class="bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl p-6 text-white flex flex-wrap justify-between items-center gap-4 shadow-lg">
+                <div>
+                    <h3 class="text-lg font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-file-export text-emerald-400"></i>
+                        匯出個資匿名化檔案
+                    </h3>
+                    <p class="text-xs text-slate-300 mt-1">匯出檔案已安全經過遮罩與泛化處理，可用於數據分析、測試測試集或合規存檔。</p>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3">
+                    <!-- Export Format Select -->
+                    <div class="flex items-center bg-slate-700/60 rounded-xl p-1 border border-slate-600">
+                        <label for="export-format" class="text-xs px-2 text-slate-300">格式：</label>
+                        <select id="export-format" class="bg-slate-800 text-white text-xs font-semibold rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-emerald-400 border border-slate-600">
+                            <option value="xlsx">Excel 工作表 (.xlsx)</option>
+                            <option value="csv">CSV 檔 (.csv)</option>
+                            <option value="json">JSON 格式 (.json)</option>
+                        </select>
+                    </div>
+
+                    <button id="view-report-btn" class="bg-slate-700 hover:bg-slate-600 text-white text-xs font-medium px-4 py-2.5 rounded-xl border border-slate-500 transition inline-flex items-center space-x-1.5">
+                        <i class="fa-solid fa-clipboard-check text-emerald-400"></i>
+                        <span>查看匿名化合規報告</span>
+                    </button>
+
+                    <button id="export-file-btn" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm px-6 py-2.5 rounded-xl shadow-lg shadow-emerald-900/40 transition transform active:scale-95 inline-flex items-center space-x-2">
+                        <i class="fa-solid fa-download"></i>
+                        <span>下載脫敏檔案</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Audit Report Modal -->
+    <div id="report-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-center border-b border-slate-200 pb-3">
+                <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-emerald-600"></i>
+                    數據匿名化合規 Audit Report
+                </h3>
+                <button id="close-report-btn" class="text-slate-400 hover:text-slate-600 p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="space-y-3 text-xs text-slate-600">
+                <div class="grid grid-cols-2 gap-2 bg-slate-50 p-3 rounded-lg border border-slate-200">
+                    <div><span class="text-slate-400">專案作者：</span><strong class="text-slate-700">邱于紋</strong></div>
+                    <div><span class="text-slate-400">處理時間：</span><strong id="report-time" class="text-slate-700">2026-08-18</strong></div>
+                    <div><span class="text-slate-400">來源檔名：</span><strong id="report-filename" class="text-slate-700">data.xlsx</strong></div>
+                    <div><span class="text-slate-400">總筆數：</span><strong id="report-total-rows" class="text-slate-700">0</strong></div>
+                </div>
+
+                <h4 class="font-bold text-slate-800 border-b border-slate-100 pb-1">處理規則摘要：</h4>
+                <div id="report-rules-summary" class="space-y-2">
+                    <!-- Rule summary injected here -->
+                </div>
+
+                <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-800 text-[11px]">
+                    <i class="fa-solid fa-circle-check mr-1"></i>
+                    此報告符合基本數據去識別化 (De-identification) 規範，去除了直接識別碼 (Direct Identifiers) 並對間接識別碼進行分群或遮罩處理。
+                </div>
+            </div>
+
+            <div class="flex justify-end pt-2">
+                <button id="modal-ok-btn" class="bg-emerald-600 text-white font-medium px-4 py-2 rounded-xl text-xs hover:bg-emerald-700">
+                    確認關閉
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-400 flex flex-wrap justify-between items-center gap-2">
+            <span>© 2026 邱于紋作品 · 本地端個資脫敏與匿名化處理工具</span>
+            <span class="flex items-center space-x-3">
+                <span class="text-emerald-600 font-medium"><i class="fa-solid fa-check-circle mr-1"></i>隱私優先，零資料外洩風險</span>
+            </span>
+        </div>
+    </footer>
+
+    <script>
+        /*
+         * 邱于紋的作品個資匿名化工具 - JavaScript Core Engine
+         * Features: Local Excel/CSV Reading, Rule Engine, Interactive Diff Preview, Export Engine
+         */
+
+        // State Management
+        const state = {
+            fileName: '',
+            fileSize: 0,
+            rawData: [],        // Original parsed array of objects
+            headers: [],        // Column keys
+            columnConfigs: {},  // Key: colName, Value: { sensitivity, type, action, maskPattern, noiseRange, groupSize }
+            anonymizedData: [], // Processed output array
+            viewMode: 'split',  // 'split', 'anon', 'orig'
+            previewFilter: '',
+            pageSize: 50
+        };
+
+        // DOM Elements
+        const fileInput = document.getElementById('file-input');
+        const loadSampleBtn = document.getElementById('load-sample-btn');
+        const uploadSection = document.getElementById('upload-section');
+        const workspaceSection = document.getElementById('workspace-section');
+        const reuploadBtn = document.getElementById('reupload-btn');
+        const applyPresetAll = document.getElementById('apply-preset-all');
+        const colsConfigGrid = document.getElementById('columns-config-grid');
+        const previewTableHead = document.getElementById('preview-table-head');
+        const previewTableBody = document.getElementById('preview-table-body');
+        const exportFileBtn = document.getElementById('export-file-btn');
+        const exportFormat = document.getElementById('export-format');
+        const previewSearch = document.getElementById('preview-search');
+        
+        // Mode Buttons
+        const viewModeSplit = document.getElementById('view-mode-split');
+        const viewModeAnon = document.getElementById('view-mode-anon');
+        const viewModeOrig = document.getElementById('view-mode-orig');
+
+        // Modal Elements
+        const reportModal = document.getElementById('report-modal');
+        const viewReportBtn = document.getElementById('view-report-btn');
+        const closeReportBtn = document.getElementById('close-report-btn');
+        const modalOkBtn = document.getElementById('modal-ok-btn');
+
+        // Built-in Regex & Header Rules for Auto Detection
+        const DETECT_RULES = {
+            NAME: {
+                headers: ['姓名', '名子', '聯絡人', '連絡人', 'name', 'contact', '客戶名稱', '會員姓名'],
+                type: 'NAME',
+                sensitivity: 'HIGH',
+                action: 'MASK_NAME'
+            },
+            TW_ID: {
+                headers: ['身分證', '身分證字號', 'id', 'idcard', '居留證', '身分證號'],
+                regex: /^[A-Z][1289]\d{8}$/i,
+                type: 'TW_ID',
+                sensitivity: 'HIGH',
+                action: 'MASK_ID'
+            },
+            PHONE: {
+                headers: ['電話', '手機', '行動電話', 'mobile', 'phone', 'tel', '聯絡電話'],
+                regex: /^09\d{8}$|^\d{2,4}-?\d{6,8}$/,
+                type: 'PHONE',
+                sensitivity: 'HIGH',
+                action: 'MASK_PHONE'
+            },
+            EMAIL: {
+                headers: ['email', '電子郵件', '信箱', 'mail', '郵件'],
+                regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                type: 'EMAIL',
+                sensitivity: 'HIGH',
+                action: 'MASK_EMAIL'
+            },
+            ADDRESS: {
+                headers: ['地址', '住址', '戶籍地址', 'address', '通訊地址'],
+                type: 'ADDRESS',
+                sensitivity: 'HIGH',
+                action: 'GENERALIZE_ADDRESS'
+            },
+            BIRTHDAY: {
+                headers: ['生日', '出生年月日', 'birthday', 'birth', '出生日期'],
+                type: 'BIRTHDAY',
+                sensitivity: 'MEDIUM',
+                action: 'GENERALIZE_DATE'
+            },
+            AGE: {
+                headers: ['年齡', '歲', 'age'],
+                type: 'AGE',
+                sensitivity: 'MEDIUM',
+                action: 'GENERALIZE_AGE'
+            },
+            CREDIT_CARD: {
+                headers: ['信用卡', '卡號', 'card', 'creditcard'],
+                regex: /^\d{4}[- ]?\d{4}[- ]?\d{4}[- ]?\d{4}$/,
+                type: 'CREDIT_CARD',
+                sensitivity: 'HIGH',
+                action: 'MASK_CARD'
+            },
+            SALARY: {
+                headers: ['薪資', '收入', '金額', 'salary', 'income', 'amount', '價格'],
+                type: 'NUMERIC',
+                sensitivity: 'LOW',
+                action: 'NOISE_NUMERIC'
+            }
+        };
+
+        // Initialize Listeners
+        window.addEventListener('DOMContentLoaded', () => {
+            fileInput.addEventListener('change', handleFileSelect);
+            loadSampleBtn.addEventListener('click', loadSampleData);
+            reuploadBtn.addEventListener('click', resetToUpload);
+            applyPresetAll.addEventListener('click', autoApplyBestRules);
+
+            // Drag & Drop
+            uploadSection.addEventListener('dragover', (e) => { e.preventDefault(); uploadSection.classList.add('border-emerald-500', 'bg-emerald-50/20'); });
+            uploadSection.addEventListener('dragleave', (e) => { e.preventDefault(); uploadSection.classList.remove('border-emerald-500', 'bg-emerald-50/20'); });
+            uploadSection.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadSection.classList.remove('border-emerald-500', 'bg-emerald-50/20');
+                if (e.dataTransfer.files.length > 0) {
+                    processFile(e.dataTransfer.files[0]);
+                }
+            });
+
+            // View Modes
+            viewModeSplit.addEventListener('click', () => setViewMode('split'));
+            viewModeAnon.addEventListener('click', () => setViewMode('anon'));
+            viewModeOrig.addEventListener('click', () => setViewMode('orig'));
+
+            // Search
+            previewSearch.addEventListener('input', (e) => {
+                state.previewFilter = e.target.value.toLowerCase();
+                renderTablePreview();
+            });
+
+            // Export
+            exportFileBtn.addEventListener('click', exportAnonymizedData);
+
+            // Modal
+            viewReportBtn.addEventListener('click', openReportModal);
+            closeReportBtn.addEventListener('click', () => reportModal.classList.add('hidden'));
+            modalOkBtn.addEventListener('click', () => reportModal.classList.add('hidden'));
+        });
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) processFile(file);
+        }
+
+        function processFile(file) {
+            state.fileName = file.name;
+            state.fileSize = file.size;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                
+                // Get First Sheet
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                
+                // Convert Sheet to JSON
+                const json = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+                if (json.length === 0) {
+                    alert('此檔案沒有可讀取的資料內容！');
+                    return;
+                }
+
+                state.rawData = json;
+                state.headers = Object.keys(json[0] || {});
+
+                analyzeColumns();
+                showWorkspace();
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function loadSampleData() {
+            state.fileName = "台灣會員個資測試檔.xlsx";
+            state.fileSize = 18400;
+            state.rawData = [
+                { "會員姓名": "張小明", "身分證號": "A123456789", "行動電話": "0912345678", "電子郵件": "xiaoming.chang@gmail.com", "戶籍地址": "臺北市大安區信義路四段100號", "出生年月日": "1992-05-18", "年齡": 34, "信用卡號": "4311-9527-8888-1234", "年收入": 850000 },
+                { "會員姓名": "林佩君", "身分證號": "B220987654", "行動電話": "0988112233", "電子郵件": "peijun.lin@yahoo.com.tw", "戶籍地址": "新北市板橋區文化路一段50號", "出生年月日": "1988-11-03", "年齡": 38, "信用卡號": "5220-1234-5678-9012", "年收入": 620000 },
+                { "會員姓名": "陳冠宇", "身分證號": "H121456123", "行動電話": "0933778899", "電子郵件": "kuanyu.chen@tech.co", "戶籍地址": "桃園市中壢區中正路200號", "出生年月日": "2000-01-25", "年齡": 26, "信用卡號": "3568-8888-0000-4321", "年收入": 480000 },
+                { "會員姓名": "黃雅婷", "身分證號": "E223344556", "行動電話": "0910554433", "電子郵件": "yating.huang@outlook.com", "戶籍地址": "臺中市西屯區台灣大道三段99號", "出生年月日": "1995-08-30", "年齡": 31, "信用卡號": "4000-1234-5678-9999", "年收入": 730000 },
+                { "會員姓名": "歐陽志強", "身分證號": "F129876543", "行動電話": "0922114477", "電子郵件": "strong.ouyang@service.org", "戶籍地址": "高雄市苓雅區四維三路2號", "出生年月日": "1979-12-12", "年齡": 47, "信用卡號": "4532-0000-1111-2222", "年收入": 1200000 }
+            ];
+            state.headers = Object.keys(state.rawData[0]);
+
+            analyzeColumns();
+            showWorkspace();
+        }
+
+        function analyzeColumns() {
+            state.columnConfigs = {};
+            let sensitiveCount = 0;
+
+            state.headers.forEach(header => {
+                const headerLower = header.toLowerCase();
+                let detectedRule = null;
+
+                // 1. Check Header Name Match
+                for (const key in DETECT_RULES) {
+                    const rule = DETECT_RULES[key];
+                    if (rule.headers.some(h => headerLower.includes(h))) {
+                        detectedRule = rule;
+                        break;
+                    }
+                }
+
+                // 2. If Header failed, inspect first 5 rows sample values
+                if (!detectedRule) {
+                    const sampleValues = state.rawData.slice(0, 5).map(r => String(r[header] || ''));
+                    for (const key in DETECT_RULES) {
+                        const rule = DETECT_RULES[key];
+                        if (rule.regex && sampleValues.some(val => rule.regex.test(val))) {
+                            detectedRule = rule;
+                            break;
+                        }
+                    }
+                }
+
+                // 3. Assign Default Config
+                if (detectedRule) {
+                    sensitiveCount++;
+                    state.columnConfigs[header] = {
+                        sensitivity: detectedRule.sensitivity,
+                        type: detectedRule.type,
+                        action: detectedRule.action,
+                        groupInterval: 10,
+                        noisePercent: 5
+                    };
+                } else {
+                    state.columnConfigs[header] = {
+                        sensitivity: 'NONE',
+                        type: 'GENERAL',
+                        action: 'KEEP',
+                        groupInterval: 10,
+                        noisePercent: 5
+                    };
+                }
+            });
+
+            // Update UI Counters
+            document.getElementById('file-name-display').innerText = state.fileName;
+            document.getElementById('file-size-badge').innerText = (state.fileSize / 1024).toFixed(1) + ' KB';
+            document.getElementById('total-rows-count').innerText = state.rawData.length;
+            document.getElementById('total-cols-count').innerText = state.headers.length;
+            document.getElementById('sensitive-cols-count').innerText = sensitiveCount;
+        }
+
+        function renderColumnConfigCards() {
+            colsConfigGrid.innerHTML = '';
+
+            state.headers.forEach(header => {
+                const config = state.columnConfigs[header];
+                const isSensitive = config.sensitivity !== 'NONE';
+
+                const card = document.createElement('div');
+                card.className = `p-4 rounded-xl border transition-all ${
+                    isSensitive 
+                    ? 'border-amber-200 bg-amber-50/30 hover:border-amber-400' 
+                    : 'border-slate-200 bg-white hover:border-slate-300'
+                }`;
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="font-bold text-sm text-slate-800 truncate max-w-[160px]" title="${header}">
+                            ${header}
+                        </div>
+                        <span class="text-[10px] font-semibold px-2 py-0.5 rounded ${
+                            config.sensitivity === 'HIGH' ? 'bg-amber-100 text-amber-800 border border-amber-300' :
+                            config.sensitivity === 'MEDIUM' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
+                            'bg-slate-100 text-slate-500'
+                        }">
+                            ${config.sensitivity === 'HIGH' ? '高敏感' : config.sensitivity === 'MEDIUM' ? '中敏感' : '一般/非個資'}
+                        </span>
+                    </div>
+
+                    <div class="space-y-2 text-xs">
+                        <div>
+                            <label class="block text-slate-500 mb-1">處理策略 (Action)：</label>
+                            <select data-header="${header}" class="rule-action-select w-full bg-white border border-slate-300 rounded-lg p-1.5 focus:ring-2 focus:ring-emerald-500 text-slate-800 font-medium">
+                                <option value="KEEP" ${config.action === 'KEEP' ? 'selected' : ''}>保持原樣 (No Change)</option>
+                                <option value="MASK_NAME" ${config.action === 'MASK_NAME' ? 'selected' : ''}>姓名遮罩 (例: 張*明)</option>
+                                <option value="MASK_ID" ${config.action === 'MASK_ID' ? 'selected' : ''}>身分證遮罩 (例: A123***789)</option>
+                                <option value="MASK_PHONE" ${config.action === 'MASK_PHONE' ? 'selected' : ''}>電話遮罩 (例: 0912***678)</option>
+                                <option value="MASK_EMAIL" ${config.action === 'MASK_EMAIL' ? 'selected' : ''}>Email 遮罩 (例: x***g@gmail.com)</option>
+                                <option value="MASK_CARD" ${config.action === 'MASK_CARD' ? 'selected' : ''}>信用卡遮罩 (例: ****-****-****-1234)</option>
+                                <option value="GENERALIZE_ADDRESS" ${config.action === 'GENERALIZE_ADDRESS' ? 'selected' : ''}>地址泛化 (僅保留縣市/鄉鎮區)</option>
+                                <option value="GENERALIZE_DATE" ${config.action === 'GENERALIZE_DATE' ? 'selected' : ''}>日期泛化 (僅保留年份或月份)</option>
+                                <option value="GENERALIZE_AGE" ${config.action === 'GENERALIZE_AGE' ? 'selected' : ''}>年齡區間泛化 (例: 30-39歲)</option>
+                                <option value="HASH_SHA256" ${config.action === 'HASH_SHA256' ? 'selected' : ''}>不可逆雜湊 (SHA-256)</option>
+                                <option value="FAKE_REPLACE" ${config.action === 'FAKE_REPLACE' ? 'selected' : ''}>假資料替代 (Pseudonymization)</option>
+                                <option value="NOISE_NUMERIC" ${config.action === 'NOISE_NUMERIC' ? 'selected' : ''}>數值加噪 (加入 +/-% 微擾)</option>
+                                <option value="SUPPRESS" ${config.action === 'SUPPRESS' ? 'selected' : ''}>完全遮罩 / 移除 [REDACTED]</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
+
+                colsConfigGrid.appendChild(card);
+            });
+
+            // Attach event listeners for dynamic changes
+            document.querySelectorAll('.rule-action-select').forEach(select => {
+                select.addEventListener('change', (e) => {
+                    const header = e.target.dataset.header;
+                    state.columnConfigs[header].action = e.target.value;
+                    reprocessAnonymization();
+                });
+            });
+        }
+
+        function reprocessAnonymization() {
+            state.anonymizedData = state.rawData.map((row, index) => {
+                const newRow = {};
+                state.headers.forEach(header => {
+                    const value = row[header];
+                    const action = state.columnConfigs[header].action;
+                    newRow[header] = applyAnonymizationRule(value, action, index);
+                });
+                return newRow;
+            });
+
+            renderTablePreview();
+        }
+
+        function applyAnonymizationRule(val, action, index) {
+            if (val === undefined || val === null || val === '') return '';
+            const strVal = String(val).trim();
+
+            switch (action) {
+                case 'KEEP':
+                    return val;
+
+                case 'MASK_NAME':
+                    // e.g. "張三" -> "張*", "張小明" -> "張*明", "歐陽志強" -> "歐**強"
+                    if (strVal.length <= 2) return strVal.charAt(0) + '*';
+                    return strVal.charAt(0) + '*'.repeat(strVal.length - 2) + strVal.charAt(strVal.length - 1);
+
+                case 'MASK_ID':
+                    // e.g. "A123456789" -> "A123***789"
+                    if (strVal.length >= 10) {
+                        return strVal.substring(0, 4) + '***' + strVal.substring(7);
+                    }
+                    return strVal.substring(0, 2) + '****' + strVal.substring(Math.max(2, strVal.length - 2));
+
+                case 'MASK_PHONE':
+                    // e.g. "0912345678" -> "0912***678"
+                    const cleanPhone = strVal.replace(/[- ]/g, '');
+                    if (cleanPhone.length === 10) {
+                        return cleanPhone.substring(0, 4) + '***' + cleanPhone.substring(7);
+                    }
+                    return strVal.substring(0, 3) + '****' + strVal.substring(Math.max(3, strVal.length - 2));
+
+                case 'MASK_EMAIL':
+                    // e.g. "xiaoming@gmail.com" -> "x***g@gmail.com"
+                    const parts = strVal.split('@');
+                    if (parts.length === 2) {
+                        const local = parts[0];
+                        const domain = parts[1];
+                        if (local.length <= 2) {
+                            return local.charAt(0) + '*@' + domain;
+                        }
+                        return local.charAt(0) + '***' + local.charAt(local.length - 1) + '@' + domain;
+                    }
+                    return '***@***.com';
+
+                case 'MASK_CARD':
+                    // e.g. "4311-9527-8888-1234" -> "****-****-****-1234"
+                    if (strVal.length >= 4) {
+                        return '****-****-****-' + strVal.slice(-4);
+                    }
+                    return '****-****-****-****';
+
+                case 'GENERALIZE_ADDRESS':
+                    // Extracts City + District e.g., "臺北市大安區信義路四段100號" -> "臺北市大安區*****"
+                    const addressMatch = strVal.match(/^(.+?[縣市].+?[區市鎮鄉])(.*)$/);
+                    if (addressMatch) {
+                        return addressMatch[1] + '*****';
+                    }
+                    return strVal.substring(0, 6) + '*****';
+
+                case 'GENERALIZE_DATE':
+                    // e.g., "1992-05-18" -> "1992-05" or "1992年"
+                    if (strVal.includes('-')) {
+                        return strVal.substring(0, 7) + '-XX';
+                    } else if (strVal.length >= 4) {
+                        return strVal.substring(0, 4) + '年';
+                    }
+                    return strVal;
+
+                case 'GENERALIZE_AGE':
+                    // e.g., 34 -> "30-39 歲"
+                    const ageNum = parseInt(strVal, 10);
+                    if (!isNaN(ageNum)) {
+                        const lower = Math.floor(ageNum / 10) * 10;
+                        return `${lower}-${lower + 9} 歲`;
+                    }
+                    return strVal;
+
+                case 'HASH_SHA256':
+                    // Simple deterministic Hash mock for frontend
+                    return 'HASH_' + simpleHash(strVal);
+
+                case 'FAKE_REPLACE':
+                    // Pseudonymization - fake names/codes
+                    const fakeNames = ['使用者A', '使用者B', '使用者C', '使用者D', '使用者E'];
+                    return fakeNames[index % fakeNames.length] + '_' + (1000 + index);
+
+                case 'NOISE_NUMERIC':
+                    // Add +/- 5% noise
+                    const num = parseFloat(strVal);
+                    if (!isNaN(num)) {
+                        const noise = (Math.random() * 0.1 - 0.05); // -5% to +5%
+                        return Math.round(num * (1 + noise));
+                    }
+                    return strVal;
+
+                case 'SUPPRESS':
+                    return '[REDACTED]';
+
+                default:
+                    return strVal;
+            }
+        }
+
+        // Fast string hash helper
+        function simpleHash(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash |= 0;
+            }
+            return Math.abs(hash).toString(16).substring(0, 8);
+        }
+
+        function renderTablePreview() {
+            previewTableHead.innerHTML = '';
+            previewTableBody.innerHTML = '';
+
+            let displayHeaders = [];
+            if (state.viewMode === 'split') {
+                // Duplicate headers for comparison
+                displayHeaders = state.headers;
+            } else {
+                displayHeaders = state.headers;
+            }
+
+            // Header Row
+            const headTr = document.createElement('tr');
+            if (state.viewMode === 'split') {
+                state.headers.forEach(h => {
+                    const th = document.createElement('th');
+                    th.className = 'px-3 py-2 border-r border-slate-200 min-w-[200px] bg-slate-100';
+                    th.innerHTML = `
+                        <div class="font-bold text-slate-800">${h}</div>
+                        <div class="flex text-[10px] text-slate-400 font-normal justify-between mt-0.5">
+                            <span class="text-slate-500">原始</span>
+                            <span class="text-emerald-600 font-semibold">匿名化後</span>
+                        </div>
+                    `;
+                    headTr.appendChild(th);
+                });
+            } else {
+                state.headers.forEach(h => {
+                    const th = document.createElement('th');
+                    th.className = 'px-3 py-2 border-r border-slate-200 min-w-[140px]';
+                    th.innerText = h;
+                    headTr.appendChild(th);
+                });
+            }
+            previewTableHead.appendChild(headTr);
+
+            // Filter Rows
+            let filteredRows = state.rawData.map((orig, idx) => ({
+                orig,
+                anon: state.anonymizedData[idx],
+                idx
+            }));
+
+            if (state.previewFilter) {
+                filteredRows = filteredRows.filter(item => {
+                    return Object.values(item.orig).some(v => String(v).toLowerCase().includes(state.previewFilter)) ||
+                           Object.values(item.anon).some(v => String(v).toLowerCase().includes(state.previewFilter));
+                });
+            }
+
+            // Render limit to max 50 rows for UI responsiveness
+            const renderLimit = Math.min(filteredRows.length, state.pageSize);
+            document.getElementById('pagination-info').innerText = `顯示前 ${renderLimit} 筆 / 共 ${filteredRows.length} 筆`;
+
+            for (let i = 0; i < renderLimit; i++) {
+                const { orig, anon } = filteredRows[i];
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 transition-colors';
+
+                state.headers.forEach(h => {
+                    const td = document.createElement('td');
+                    td.className = 'px-3 py-2 border-r border-b border-slate-200 text-slate-700 font-sans';
+
+                    const origVal = orig[h] !== undefined ? String(orig[h]) : '';
+                    const anonVal = anon[h] !== undefined ? String(anon[h]) : '';
+                    const isChanged = origVal !== anonVal;
+
+                    if (state.viewMode === 'split') {
+                        td.innerHTML = `
+                            <div class="grid grid-cols-2 gap-2 items-center">
+                                <span class="text-slate-400 line-through truncate text-[11px]" title="${origVal}">${origVal}</span>
+                                <span class="truncate ${isChanged ? 'text-emerald-700 font-bold bg-emerald-50 px-1 rounded border border-emerald-200' : 'text-slate-700'}" title="${anonVal}">
+                                    ${anonVal}
+                                </span>
+                            </div>
+                        `;
+                    } else if (state.viewMode === 'anon') {
+                        td.innerText = anonVal;
+                        if (isChanged) td.className += ' bg-emerald-50/60 font-semibold text-emerald-800';
+                    } else {
+                        td.innerText = origVal;
+                    }
+
+                    tr.appendChild(td);
+                });
+
+                previewTableBody.appendChild(tr);
+            }
+        }
+
+        function setViewMode(mode) {
+            state.viewMode = mode;
+
+            viewModeSplit.className = mode === 'split' ? 'px-3 py-1 rounded-md bg-white shadow-sm text-slate-800 font-semibold' : 'px-3 py-1 rounded-md text-slate-600 hover:text-slate-900';
+            viewModeAnon.className = mode === 'anon' ? 'px-3 py-1 rounded-md bg-white shadow-sm text-slate-800 font-semibold' : 'px-3 py-1 rounded-md text-slate-600 hover:text-slate-900';
+            viewModeOrig.className = mode === 'orig' ? 'px-3 py-1 rounded-md bg-white shadow-sm text-slate-800 font-semibold' : 'px-3 py-1 rounded-md text-slate-600 hover:text-slate-900';
+
+            renderTablePreview();
+        }
+
+        function autoApplyBestRules() {
+            analyzeColumns();
+            renderColumnConfigCards();
+            reprocessAnonymization();
+        }
+
+        function showWorkspace() {
+            uploadSection.classList.add('hidden');
+            workspaceSection.classList.remove('hidden');
+
+            renderColumnConfigCards();
+            reprocessAnonymization();
+        }
+
+        function resetToUpload() {
+            workspaceSection.classList.add('hidden');
+            uploadSection.classList.remove('hidden');
+            fileInput.value = '';
+        }
+
+        function exportAnonymizedData() {
+            if (state.anonymizedData.length === 0) return;
+
+            const format = exportFormat.value;
+            const outputFileName = state.fileName.replace(/\.[^/.]+$/, "") + "_脫敏完成." + format;
+
+            if (format === 'json') {
+                const jsonStr = JSON.stringify(state.anonymizedData, null, 2);
+                downloadBlob(jsonStr, outputFileName, 'application/json');
+            } else if (format === 'csv') {
+                const worksheet = XLSX.utils.json_to_sheet(state.anonymizedData);
+                const csvOutput = XLSX.utils.sheet_to_csv(worksheet);
+                downloadBlob(csvOutput, outputFileName, 'text/csv;charset=utf-8;');
+            } else {
+                // XLSX Excel
+                const worksheet = XLSX.utils.json_to_sheet(state.anonymizedData);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, "脫敏數據");
+                XLSX.writeFile(workbook, outputFileName);
+            }
+        }
+
+        function downloadBlob(content, filename, contentType) {
+            const blob = new Blob([content], { type: contentType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => {
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            }, 100);
+        }
+
+        function openReportModal() {
+            document.getElementById('report-filename').innerText = state.fileName;
+            document.getElementById('report-total-rows').innerText = state.rawData.length + ' 列';
+            document.getElementById('report-time').innerText = new Date().toLocaleString('zh-TW');
+
+            const rulesContainer = document.getElementById('report-rules-summary');
+            rulesContainer.innerHTML = '';
+
+            state.headers.forEach(h => {
+                const config = state.columnConfigs[h];
+                if (config.action !== 'KEEP') {
+                    const item = document.createElement('div');
+                    item.className = 'flex justify-between items-center bg-slate-50 p-2 rounded border border-slate-200';
+                    item.innerHTML = `
+                        <span class="font-bold text-slate-700">${h}</span>
+                        <span class="text-emerald-700 font-mono bg-emerald-100 px-2 py-0.5 rounded">${config.action}</span>
+                    `;
+                    rulesContainer.appendChild(item);
+                }
+            });
+
+            if (rulesContainer.children.length === 0) {
+                rulesContainer.innerHTML = '<p class="text-slate-400 italic">無設定任何脫敏處理規則。</p>';
+            }
+
+            reportModal.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
