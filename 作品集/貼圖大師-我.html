@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的 3D 萌萌貼圖</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        candy: {
+                            peach: '#fff1f2',
+                            lavender: '#f5f3ff',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Inter"', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #fff1f2 0%, #f5f3ff 100%);
+            min-height: 100vh;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+        .sticker-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .sticker-card:hover {
+            transform: scale(1.05) rotate(2deg);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+        }
+        .sticker-img {
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            border-radius: 16px;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased text-gray-800">
+
+    <main class="max-w-6xl mx-auto px-6 py-16">
+        <!-- Header -->
+        <header class="text-center mb-20">
+            <h1 class="text-5xl md:text-6xl font-black text-pink-500 tracking-tight drop-shadow-sm">
+                我的 3D 萌萌貼圖
+            </h1>
+            <p class="mt-4 text-pink-400 font-medium text-lg">充滿活力的可愛數位收藏</p>
+        </header>
+
+        <!-- Gallery Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 justify-items-center">
+            
+            <!-- Card 1 -->
+            <div class="sticker-card w-full max-w-xs bg-white/70 p-6 rounded-[32px]">
+                <div class="overflow-hidden mb-4">
+                    <img src='https://opal.google/board/blobs/5cc45d05-a3a5-4f17-bf5f-ec2f15393a35' alt='Joyful Dynamic Pose' class="sticker-img w-full shadow-inner" />
+                </div>
+                <h2 class="text-xl font-bold text-gray-700 text-center">Joyful Dynamic Pose</h2>
+                <p class="text-sm text-pink-400 text-center font-semibold mt-1">邱于紋製作</p>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="sticker-card w-full max-w-xs bg-white/70 p-6 rounded-[32px]">
+                <div class="overflow-hidden mb-4">
+                    <img src='https://opal.google/board/blobs/694b9554-37a9-498f-9aac-70c155d3f17d' alt='Cheerful Close-up Portrait' class="sticker-img w-full shadow-inner" />
+                </div>
+                <h2 class="text-xl font-bold text-gray-700 text-center">Cheerful Close-up</h2>
+                <p class="text-sm text-pink-400 text-center font-semibold mt-1">邱于紋製作</p>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="sticker-card w-full max-w-xs bg-white/70 p-6 rounded-[32px]">
+                <div class="overflow-hidden mb-4">
+                    <img src='https://opal.google/board/blobs/308dace6-b590-4795-98b0-1e8cde09caf1' alt='Sitting Pose with Decorative Item' class="sticker-img w-full shadow-inner" />
+                </div>
+                <h2 class="text-xl font-bold text-gray-700 text-center">Sitting Pose</h2>
+                <p class="text-sm text-pink-400 text-center font-semibold mt-1">邱于紋製作</p>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="sticker-card w-full max-w-xs bg-white/70 p-6 rounded-[32px] lg:col-start-2">
+                <div class="overflow-hidden mb-4">
+                    <img src='https://opal.google/board/blobs/d0e13bc3-539a-4a69-9467-e98300ae6359' alt='Enthusiastic Waving Pose' class="sticker-img w-full shadow-inner" />
+                </div>
+                <h2 class="text-xl font-bold text-gray-700 text-center">Enthusiastic Waving</h2>
+                <p class="text-sm text-pink-400 text-center font-semibold mt-1">邱于紋製作</p>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="sticker-card w-full max-w-xs bg-white/70 p-6 rounded-[32px]">
+                <div class="overflow-hidden mb-4">
+                    <img src='https://opal.google/board/blobs/25ebdce4-8e04-42fc-ad83-73478bfca3f8' alt='Text-Focused Peeking Pose' class="sticker-img w-full shadow-inner" />
+                </div>
+                <h2 class="text-xl font-bold text-gray-700 text-center">Peeking Pose</h2>
+                <p class="text-sm text-pink-400 text-center font-semibold mt-1">邱于紋製作</p>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // Simple animation trigger or micro-interactions could be added here if needed
+        document.querySelectorAll('.sticker-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.classList.add('z-10');
+            });
+            card.addEventListener('mouseleave', () => {
+                card.classList.remove('z-10');
+            });
+        });
+    </script>
+</body>
+</html>

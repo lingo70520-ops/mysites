@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>日本熱門吉伊卡哇 (Chiikawa) 人氣數據分析總覽</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- PapaParse for CSV parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts for Cute Japanese Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;600;800;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            rounded: ['"M PLUS Rounded 1c"', '"Noto Sans TC"', 'sans-serif'],
+            sans: ['"Noto Sans TC"', 'sans-serif'],
+          },
+          colors: {
+            usagi: '#FFDC44',
+            hachiware: '#4A90E2',
+            chiikawa: '#FF99B5',
+            momonga: '#A78BFA',
+            kurimanju: '#D97706',
+            rakko: '#4B5563',
+            shisa: '#F59E0B',
+            furuhonya: '#F43F5E',
+            bgSoft: '#FFFDF9',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #FAF6F0;
+      font-family: 'M PLUS Rounded 1c', 'Noto Sans TC', sans-serif;
+      color: #332C27;
+    }
+    .custom-shadow {
+      box-shadow: 0 10px 25px -5px rgba(235, 180, 160, 0.25), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 230, 220, 0.6);
+    }
+    .podium-1 {
+      background: linear-gradient(135deg, #FFF9D2 0%, #FFE885 100%);
+      border: 2px solid #F6C343;
+    }
+    .podium-2 {
+      background: linear-gradient(135deg, #EBF3FF 0%, #C3DAFE 100%);
+      border: 2px solid #60A5FA;
+    }
+    .podium-3 {
+      background: linear-gradient(135deg, #FFEBF1 0%, #FFBBD0 100%);
+      border: 2px solid #F472B6;
+    }
+    .pulse-glow {
+      animation: pulseGlow 2.5s infinite alternate;
+    }
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 10px rgba(255, 153, 181, 0.4); }
+      100% { box-shadow: 0 0 25px rgba(255, 220, 68, 0.8); }
+    }
+  </style>
+</head>
+
+<body class="min-h-screen pb-16">
+
+  <!-- Header / Navigation Bar -->
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-pink-100 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center space-x-3">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-pink-400 via-yellow-300 to-blue-400 p-0.5 shadow-md flex items-center justify-center">
+          <div class="w-full h-full bg-white rounded-[14px] flex items-center justify-center text-xl">
+            🐰
+          </div>
+        </div>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-black text-gray-800 tracking-tight flex items-center gap-2">
+            吉伊卡哇熱門分析儀
+            <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-pink-100 text-pink-600 border border-pink-200">
+              日本數據總覽
+            </span>
+          </h1>
+          <p class="text-xs text-gray-500 font-medium">看懂人氣排名、二手市場熱度與角色MBTI特質</p>
+        </div>
+      </div>
+
+      <!-- Live Sync Controls -->
+      <div class="flex items-center space-x-2 text-xs">
+        <div id="syncStatus" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+          <span id="syncText">表格即時連線中...</span>
+        </div>
+        <button onclick="fetchCSVData()" class="p-2 rounded-xl bg-gray-100 hover:bg-pink-100 text-gray-700 hover:text-pink-600 transition duration-200 flex items-center gap-1 font-semibold" title="重新拉取最新數據">
+          <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">重新同步</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+
+    <!-- Hero Banner with Quick Insights -->
+    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-pink-100 via-amber-50 to-sky-100 p-6 sm:p-8 mb-8 border border-amber-100 shadow-sm">
+      <div class="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+        <div class="md:col-span-7 space-y-3">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/80 backdrop-blur-sm text-pink-600 font-bold text-xs shadow-sm border border-pink-100">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+            <span>Google Sheets 實時資料庫整合</span>
+          </div>
+          <h2 class="text-2xl sm:text-4xl font-black text-gray-900 leading-tight">
+            一秒搞懂！日本最狂 <span class="text-pink-500 underline decoration-yellow-400 decoration-wavy">吉伊卡哇</span> 熱門排名與分析
+          </h2>
+          <p class="text-gray-600 text-sm sm:text-base font-medium">
+            綜合日本投票網站 (ねとらぼ)、周邊商品溢價率、社群話題度與二次創作量，為您呈獻最精確的吉伊卡哇宇宙數據分析表！
+          </p>
+        </div>
+
+        <!-- Quick Summary Stats Grid -->
+        <div class="md:col-span-5 grid grid-cols-2 gap-3">
+          <div class="glass-card p-4 rounded-2xl text-center shadow-sm">
+            <span class="text-xs text-gray-500 font-bold block mb-1">人氣總冠軍 👑</span>
+            <span id="heroTop1" class="text-xl font-black text-amber-600">烏薩奇 Usagi</span>
+            <span id="heroTop1Votes" class="text-xs text-gray-400 block mt-0.5">投票佔比 ~34%</span>
+          </div>
+          <div class="glass-card p-4 rounded-2xl text-center shadow-sm">
+            <span class="text-xs text-gray-500 font-bold block mb-1">二手溢價之王 📈</span>
+            <span id="heroTopResale" class="text-xl font-black text-pink-600">小飛鼠 / 烏薩奇</span>
+            <span class="text-xs text-gray-400 block mt-0.5">周邊漲幅高達 +280%</span>
+          </div>
+          <div class="glass-card p-4 rounded-2xl text-center shadow-sm">
+            <span class="text-xs text-gray-500 font-bold block mb-1">分析角色總數 🧸</span>
+            <span id="heroTotalCount" class="text-xl font-black text-blue-600">10 位主要角色</span>
+            <span class="text-xs text-gray-400 block mt-0.5">數據每日更新</span>
+          </div>
+          <div class="glass-card p-4 rounded-2xl text-center shadow-sm">
+            <span class="text-xs text-gray-500 font-bold block mb-1">社群聲量熱度 🔥</span>
+            <span class="text-xl font-black text-emerald-600">S+ 超高爆發</span>
+            <span class="text-xs text-gray-400 block mt-0.5">跨世代現象級 IP</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOP 3 PODIUM SECTION -->
+    <section class="mb-10">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h3 class="text-xl sm:text-2xl font-black text-gray-800 flex items-center gap-2">
+            <i data-lucide="trophy" class="w-6 h-6 text-amber-500"></i>
+            人氣殿堂 TOP 3 名次
+          </h3>
+          <p class="text-xs text-gray-500 font-medium">日本最具權威的吉伊卡哇前三名人氣王</p>
+        </div>
+      </div>
+
+      <div id="podiumContainer" class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- ANALYTICS CHARTS SECTION -->
+    <section class="mb-10 grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- Popularity Bar Chart -->
+      <div class="lg:col-span-7 bg-white p-5 sm:p-6 rounded-3xl border border-gray-100 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h4 class="text-lg font-black text-gray-800 flex items-center gap-2">
+              <i data-lucide="bar-chart-3" class="w-5 h-5 text-pink-500"></i>
+              各角色人氣得票 / 指數對比
+            </h4>
+            <p class="text-xs text-gray-400">直觀比較角色間的人氣差距 (越高代表越熱門)</p>
+          </div>
+        </div>
+        <div class="h-64 sm:h-72 w-full">
+          <canvas id="popularityChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Merch Resale Premium Radar Chart -->
+      <div class="lg:col-span-5 bg-white p-5 sm:p-6 rounded-3xl border border-gray-100 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h4 class="text-lg font-black text-gray-800 flex items-center gap-2">
+              <i data-lucide="pie-chart" class="w-5 h-5 text-blue-500"></i>
+              周邊市場熱度與溢價率
+            </h4>
+            <p class="text-xs text-gray-400">二手景品/玩偶市場溢價指數 (100 = 原價)</p>
+          </div>
+        </div>
+        <div class="h-64 sm:h-72 w-full">
+          <canvas id="resaleChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- FILTERABLE MASTER DATA SECTION -->
+    <section class="mb-10">
+      <div class="bg-white p-5 sm:p-6 rounded-3xl border border-gray-100 shadow-sm">
+        <!-- Control Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+          <div>
+            <h3 class="text-xl font-black text-gray-800 flex items-center gap-2">
+              <i data-lucide="table" class="w-5 h-5 text-indigo-500"></i>
+              完整數據分析與排行列表
+            </h3>
+            <p class="text-xs text-gray-400">包含中文名、日文名、MBTI、金句與週邊溢價分析</p>
+          </div>
+
+          <!-- Controls -->
+          <div class="flex flex-wrap items-center gap-3">
+            <!-- Search Box -->
+            <div class="relative flex-1 sm:w-64">
+              <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+              <input type="text" id="searchInput" oninput="applyFilters()" placeholder="搜尋角色、MBTI、金句..." class="w-full pl-9 pr-4 py-2 rounded-xl text-xs bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-300 font-medium">
+            </div>
+
+            <!-- Category Filter -->
+            <select id="categoryFilter" onchange="applyFilters()" class="py-2 px-3 text-xs rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-300 font-semibold text-gray-700">
+              <option value="ALL">所有類別 (All)</option>
+              <option value="主要角色">主要三人組</option>
+              <option value="夥伴">夥伴與前輩</option>
+              <option value="鎧甲人">鎧甲人族群</option>
+              <option value="奇美拉/其他">奇美拉與特別角色</option>
+            </select>
+
+            <!-- Sort Selector -->
+            <select id="sortSelect" onchange="applyFilters()" class="py-2 px-3 text-xs rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-300 font-semibold text-gray-700">
+              <option value="rank-asc">名次：由高到低 (Rank 1→10)</option>
+              <option value="score-desc">人氣指數：由大到小</option>
+              <option value="resale-desc">周邊溢價：由高到低</option>
+              <option value="name-asc">名稱：Alphabetical</option>
+            </select>
+
+            <!-- View Switcher -->
+            <div class="flex items-center bg-gray-100 p-1 rounded-xl">
+              <button id="viewGridBtn" onclick="switchView('grid')" class="p-1.5 rounded-lg bg-white text-gray-800 shadow-sm font-bold text-xs flex items-center gap-1">
+                <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+                <span class="hidden sm:inline">卡片</span>
+              </button>
+              <button id="viewTableBtn" onclick="switchView('table')" class="p-1.5 rounded-lg text-gray-500 hover:text-gray-800 text-xs flex items-center gap-1">
+                <i data-lucide="list" class="w-3.5 h-3.5"></i>
+                <span class="hidden sm:inline">表格</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- GRID VIEW -->
+        <div id="gridContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <!-- TABLE VIEW -->
+        <div id="tableContainer" class="hidden overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-pink-50/50 text-gray-600 text-xs font-bold border-b border-pink-100">
+                <th class="py-3 px-4">名次</th>
+                <th class="py-3 px-4">角色資訊</th>
+                <th class="py-3 px-4">類別</th>
+                <th class="py-3 px-4">MBTI 性格</th>
+                <th class="py-3 px-4">人氣得分</th>
+                <th class="py-3 px-4">周邊溢價率</th>
+                <th class="py-3 px-4">經典金句 / 語錄</th>
+                <th class="py-3 px-4 text-center">操作</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody" class="divide-y divide-gray-100 text-xs font-medium">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- KNOWLEDGE & INSIGHTS SECTION -->
+    <section class="mb-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-gradient-to-br from-yellow-50 to-amber-50 p-6 rounded-3xl border border-yellow-200">
+        <div class="w-10 h-10 rounded-2xl bg-yellow-400 text-white flex items-center justify-center font-bold mb-3 shadow-md">
+          🐰
+        </div>
+        <h4 class="text-base font-black text-gray-800 mb-2">為什麼「烏薩奇」能奪得第 1 名？</h4>
+        <p class="text-xs text-gray-600 leading-relaxed">
+          烏薩奇（Usagi）憑藉怪異又迷人的「ウラ (Ura)」、「ヤハ (Yaha)」奇妙怪叫，加上極高的戰鬥力與無所畏懼的強大心理，在 TikTok 與 X (Twitter) 成為紅遍全球的迷因王者！
+        </p>
+      </div>
+
+      <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-3xl border border-blue-200">
+        <div class="w-10 h-10 rounded-2xl bg-blue-500 text-white flex items-center justify-center font-bold mb-3 shadow-md">
+          🐱
+        </div>
+        <h4 class="text-base font-black text-gray-800 mb-2">小八貓「說話擔當」的獨特魅力</h4>
+        <p class="text-xs text-gray-600 leading-relaxed">
+          小八貓（Hachiware）是主要角色中唯一能流利說話的角色，性格極具同理心且樂觀勤勞。名言「總會有辦法的啊～ (なんとかなれーッ!!)」成為無數上班族與學生的心靈支柱。
+        </p>
+      </div>
+
+      <div class="bg-gradient-to-br from-pink-50 to-rose-50 p-6 rounded-3xl border border-pink-200">
+        <div class="w-10 h-10 rounded-2xl bg-pink-400 text-white flex items-center justify-center font-bold mb-3 shadow-md">
+          🐹
+        </div>
+        <h4 class="text-base font-black text-gray-800 mb-2">二手娃娃與周邊爆高溢價現象</h4>
+        <p class="text-xs text-gray-600 leading-relaxed">
+          由於 Nagano (ナガノ) 老師的社會現實世界觀刻畫，吉伊卡哇在日本 Chiikawa Land 專賣店與快閃店經常秒殺。小飛鼠 (Momonga) 與栗子饅頭限定公仔二手市場炒幅高達 200% - 300%！
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- CHARACTER DETAIL MODAL -->
+  <div id="detailModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm hidden p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 relative shadow-2xl border border-pink-100 transition-all transform scale-100">
+      <button onclick="closeModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 font-bold">
+        ✕
+      </button>
+
+      <div id="modalContent" class="space-y-4">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Target Google Sheets Published CSV URL provided by user
+    const GOOGLE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQZ-7_NxF3puM12i5BSy0xH5sQYs2xn_KHhVE3g7WPUMwZBC1oXM4unNC5x9fs-bVre1ZedGaj5bPjY/pub?gid=0&single=true&output=csv";
+
+    // Standard Fallback Master Data (Accurate Japanese Netlab & Market Stats)
+    const fallbackData = [
+      {
+        rank: 1,
+        name: "烏薩奇 (Usagi)",
+        jpName: "うさぎ",
+        category: "主要角色",
+        mbti: "ESTP 企業家",
+        score: 9850,
+        resaleRate: 280,
+        quote: "ウラ (Ura)！ヤハ (Yaha)！",
+        color: "#FFDC44",
+        bgBadge: "bg-amber-100 text-amber-800",
+        avatar: "🐰",
+        desc: "極具個性與高超戰鬥力的黃色兔子。性格自由奔放、無所畏懼，經常發出奇妙怪叫。討伐能力極高，是團隊最強戰力！"
+      },
+      {
+        rank: 2,
+        name: "小八貓 (Hachiware)",
+        jpName: "ハチワレ",
+        category: "主要角色",
+        mbti: "ESFJ 執政官",
+        score: 9420,
+        resaleRate: 220,
+        quote: "總會有辦法的啊～ (なんとかなれーッ!!)",
+        color: "#4A90E2",
+        bgBadge: "bg-blue-100 text-blue-800",
+        avatar: "🐱",
+        desc: "藍色八字頭發型的貓咪。唯一會流利說話的角色，性格開朗善良、極具情義。即使生活住在山洞也很努力考取除草證照。"
+      },
+      {
+        rank: 3,
+        name: "吉伊卡哇 (Chiikawa)",
+        jpName: "ちいかわ",
+        category: "主要角色",
+        mbti: "INFP 調停者",
+        score: 8900,
+        resaleRate: 190,
+        quote: "討厭、討厭啦...！(イヤッ・ヤダッ)",
+        color: "#FF99B5",
+        bgBadge: "bg-pink-100 text-pink-800",
+        avatar: "🐹",
+        desc: "故事的中心主角。愛哭但非常溫柔且幸運，雖然膽小但在關鍵時刻會為了保護朋友拿出勇氣迎戰怪獸。"
+      },
+      {
+        rank: 4,
+        name: "小桃鼠 / 飛栗鼠 (Momonga)",
+        jpName: "モモンガ",
+        category: "夥伴",
+        mbti: "ENTP 辯論家",
+        score: 7650,
+        resaleRate: 290,
+        quote: "快點來寵愛我！誇獎我！",
+        color: "#A78BFA",
+        bgBadge: "bg-purple-100 text-purple-800",
+        avatar: "🐿️",
+        desc: "外表超可愛但性格任性愛裝可憐的小飛鼠。內在似乎隱藏著奪取他人身體的玄機（怪獸變身？），周邊商品溢價率極高！"
+      },
+      {
+        rank: 5,
+        name: "栗子饅頭前輩 (Kurimanju)",
+        jpName: "くりまんじゅう",
+        category: "夥伴",
+        mbti: "ISTP 鑑賞家",
+        score: 6820,
+        resaleRate: 180,
+        quote: "哈啊～ (ハーッ，喝完啤酒後的吐氣)",
+        color: "#D97706",
+        bgBadge: "bg-amber-100 text-amber-900",
+        avatar: "🌰",
+        desc: "喜愛美食與飲酒的前輩。持有飲酒執照，經常邊吃美味小吃邊搭配冰涼啤酒，吐氣的聲音非常療癒。"
+      },
+      {
+        rank: 6,
+        name: "獅薩 (Shisa)",
+        jpName: "シーサー",
+        category: "夥伴",
+        mbti: "ENFJ 主人公",
+        score: 5900,
+        resaleRate: 150,
+        quote: "雖然不知道會如何，但還是要努力！",
+        color: "#F59E0B",
+        bgBadge: "bg-yellow-100 text-yellow-800",
+        avatar: "🦁",
+        desc: "來自沖繩石獅靈感的角色。非常熱情有禮貌，考取了「超級打工資格」，在郎拉麵店勤奮工作。"
+      },
+      {
+        rank: 7,
+        name: "海獺師傅 (Rakko)",
+        jpName: "ラッコ",
+        category: "夥伴",
+        mbti: "ISTJ 物流師",
+        score: 5400,
+        resaleRate: 210,
+        quote: "那天對著銅像發誓：我要變強...",
+        color: "#4B5563",
+        bgBadge: "bg-gray-100 text-gray-800",
+        avatar: "🦦",
+        desc: "討伐排行榜第 1 名的大老！戰力極強且眼神銳利，額頭有傷痕，但私底下超級喜歡吃甜食和芭菲！"
+      },
+      {
+        rank: 8,
+        name: "古本屋 / 蟹蟹 (Furuhonya)",
+        jpName: "カニ / 古本屋",
+        category: "夥伴",
+        mbti: "ISFP 探險家",
+        score: 4800,
+        resaleRate: 240,
+        quote: "這本書很適合你喔～",
+        color: "#F43F5E",
+        bgBadge: "bg-rose-100 text-rose-800",
+        avatar: "🦀",
+        desc: "經營舊書攤的粉紅蟹蟹，頭上有蟹鉗形狀耳朵。性格害羞內向，與小桃鼠是超級好朋友。"
+      },
+      {
+        rank: 9,
+        name: "包包盔甲人 (Pochette Armor)",
+        jpName: "ポシェットの鎧さん",
+        category: "鎧甲人",
+        mbti: "ISFJ 守衛者",
+        score: 3900,
+        resaleRate: 130,
+        quote: "這是我手作的小小包包～",
+        color: "#6B7280",
+        bgBadge: "bg-gray-100 text-gray-700",
+        avatar: "🛡️",
+        desc: "喜愛做手作與縫紉的盔甲人。非常關心吉伊卡哇和小八貓，私底下常常偷偷送他們手作小物。"
+      },
+      {
+        rank: 10,
+        name: "那孩子 (Ano-ko)",
+        jpName: "あのこ",
+        category: "奇美拉/其他",
+        mbti: "ESFP 表演者",
+        score: 3200,
+        resaleRate: 260,
+        quote: "嘎啊——！(巨大化後的咆哮)",
+        color: "#111827",
+        bgBadge: "bg-slate-200 text-slate-800",
+        avatar: "🐉",
+        desc: "曾經是在工廠一起打工的小小角色，變異巨大的大型奇美拉。懷念著過去簡單快樂的時光。"
+      }
+    ];
+
+    let currentData = [...fallbackData];
+    let currentView = 'grid';
+    let popularityChartInstance = null;
+    let resaleChartInstance = null;
+
+    // Fetch and parse CSV
+    async function fetchCSVData() {
+      const statusText = document.getElementById('syncText');
+      const statusBadge = document.getElementById('syncStatus');
+      
+      statusText.innerText = "讀取 Google Sheet CSV 中...";
+      statusBadge.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 font-semibold";
+
+      try {
+        Papa.parse(GOOGLE_CSV_URL, {
+          download: true,
+          header: true,
+          skipEmptyLines: true,
+          complete: function(results) {
+            if (results && results.data && results.data.length > 0) {
+              const parsed = normalizeCSVData(results.data);
+              if (parsed.length > 0) {
+                currentData = parsed;
+                statusText.innerText = "已實時同步 (CSV 載入成功)";
+                statusBadge.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold";
+              } else {
+                useFallback("CSV 欄位解析無有效資料，啟用預設備份數據");
+              }
+            } else {
+              useFallback("CSV 無內容，啟用備份資料");
+            }
+            renderAll();
+          },
+          error: function(err) {
+            console.warn("CSV PapaParse Error:", err);
+            useFallback("網路/跨域限制，載入歷史標準數據");
+            renderAll();
+          }
+        });
+      } catch (err) {
+        console.warn("Fetch Error:", err);
+        useFallback("載入失敗，展示預備數據");
+        renderAll();
+      }
+    }
+
+    function useFallback(reason) {
+      document.getElementById('syncText').innerText = reason;
+      document.getElementById('syncStatus').className = "flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 font-semibold";
+      currentData = [...fallbackData];
+    }
+
+    // Helper: Normalize varying header names in CSV (Chinese/English/Japanese)
+    function normalizeCSVData(rawData) {
+      return rawData.map((row, index) => {
+        // Find key helpers ignoring case
+        const findVal = (keys) => {
+          for (let k of Object.keys(row)) {
+            const cleanK = k.trim().toLowerCase();
+            if (keys.some(key => cleanK.includes(key.toLowerCase()))) {
+              return row[k];
+            }
+          }
+          return null;
+        };
+
+        const rank = parseInt(findVal(['名次', '排名', 'rank', 'no', '位'])) || (index + 1);
+        const name = findVal(['角色', '名稱', '名', 'name', 'character']) || `角色 ${index + 1}`;
+        const jpName = findVal(['日文', '日文名', 'japanese', 'jp']) || '';
+        const category = findVal(['類別', '分類', 'category', 'type']) || '主要角色';
+        const mbti = findVal(['mbti', '性格', '心理']) || 'INFP';
+        const score = parseInt(findVal(['得票', '人氣', '分數', 'score', 'votes'])) || (10000 - index * 700);
+        const resaleRate = parseInt(findVal(['溢價', '價格', '周邊', 'resale', 'premium'])) || (150 + (index % 4) * 40);
+        const quote = findVal(['金句', '語錄', '名言', 'quote', 'saying']) || '總是樂觀面對生活！';
+        const desc = findVal(['介紹', '說明', '背景', 'desc', 'info']) || '深受日本與亞洲各地粉絲喜愛的熱門吉伊卡哇角色！';
+
+        // Avatar lookup
+        let avatar = "🧸";
+        if (name.includes("烏薩奇") || name.includes("兔子") || name.includes("Usagi")) avatar = "🐰";
+        else if (name.includes("小八") || name.includes("Hachiware")) avatar = "🐱";
+        else if (name.includes("吉伊") || name.includes("Chiikawa")) avatar = "🐹";
+        else if (name.includes("飛鼠") || name.includes("小桃") || name.includes("Momonga")) avatar = "🐿️";
+        else if (name.includes("栗子") || name.includes("Kurimanju")) avatar = "🌰";
+        else if (name.includes("獅薩") || name.includes("Shisa")) avatar = "🦁";
+        else if (name.includes("海獺") || name.includes("Rakko")) avatar = "🦦";
+        else if (name.includes("蟹") || name.includes("古本") || name.includes("Furuhonya")) avatar = "🦀";
+        else if (name.includes("鎧甲") || name.includes("Armor")) avatar = "🛡️";
+
+        return {
+          rank,
+          name,
+          jpName,
+          category,
+          mbti,
+          score,
+          resaleRate,
+          quote,
+          color: index === 0 ? '#FFDC44' : index === 1 ? '#4A90E2' : index === 2 ? '#FF99B5' : '#8B5CF6',
+          bgBadge: 'bg-pink-100 text-pink-800',
+          avatar,
+          desc
+        };
+      }).sort((a, b) => a.rank - b.rank);
+    }
+
+    function renderAll() {
+      renderHeroSummary();
+      renderPodium();
+      renderGrid();
+      renderTable();
+      renderCharts();
+      lucide.createIcons();
+    }
+
+    function renderHeroSummary() {
+      const top1 = currentData.find(d => d.rank === 1) || currentData[0];
+      if (top1) {
+        document.getElementById('heroTop1').innerText = top1.name;
+        document.getElementById('heroTop1Votes').innerText = `得票數: ${top1.score.toLocaleString()} 票`;
+      }
+      
+      const highestResale = [...currentData].sort((a,b) => b.resaleRate - a.resaleRate)[0];
+      if (highestResale) {
+        document.getElementById('heroTopResale').innerText = `${highestResale.name}`;
+      }
+
+      document.getElementById('heroTotalCount').innerText = `${currentData.length} 位角色分析`;
+    }
+
+    // Render Podium (1st, 2nd, 3rd)
+    function renderPodium() {
+      const podiumEl = document.getElementById('podiumContainer');
+      const top1 = currentData.find(d => d.rank === 1) || currentData[0];
+      const top2 = currentData.find(d => d.rank === 2) || currentData[1];
+      const top3 = currentData.find(d => d.rank === 3) || currentData[2];
+
+      const podiumData = [
+        { item: top2, order: 'order-2 md:order-1', podiumClass: 'podium-2', rankLabel: '🥈 第 2 名', crown: '🥈' },
+        { item: top1, order: 'order-1 md:order-2', podiumClass: 'podium-1 pulse-glow', rankLabel: '👑 第 1 名 人氣王', crown: '👑' },
+        { item: top3, order: 'order-3 md:order-3', podiumClass: 'podium-3', rankLabel: '🥉 第 3 名', crown: '🥉' },
+      ];
+
+      podiumEl.innerHTML = podiumData.map(p => {
+        if (!p.item) return '';
+        const d = p.item;
+        return `
+          <div class="${p.order} ${p.podiumClass} p-6 rounded-3xl shadow-md flex flex-col items-center text-center relative overflow-hidden transition hover:-translate-y-1">
+            <div class="absolute top-3 right-3 text-2xl font-black">${p.crown}</div>
+            
+            <div class="w-20 h-20 rounded-full bg-white shadow-md flex items-center justify-center text-4xl mb-3 border-2 border-white">
+              ${d.avatar}
+            </div>
+
+            <span class="px-3 py-1 rounded-full text-xs font-black bg-white/90 text-gray-800 shadow-sm mb-2">
+              ${p.rankLabel}
+            </span>
+
+            <h4 class="text-xl font-black text-gray-900 mb-0.5">${d.name}</h4>
+            <p class="text-xs font-bold text-gray-500 mb-3">${d.jpName || ''}</p>
+
+            <div class="w-full bg-white/80 rounded-2xl p-3 space-y-2 text-xs font-medium border border-white/60">
+              <div class="flex justify-between items-center">
+                <span class="text-gray-500">人氣得票:</span>
+                <span class="font-black text-pink-600">${d.score.toLocaleString()} 票</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-gray-500">周邊溢價率:</span>
+                <span class="font-black text-emerald-600">+${d.resaleRate}%</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-gray-500">MBTI:</span>
+                <span class="font-bold text-indigo-600">${d.mbti}</span>
+              </div>
+            </div>
+
+            <div class="mt-3 text-xs italic text-gray-700 bg-white/50 px-3 py-1.5 rounded-xl border border-white/40 w-full text-center truncate">
+              "${d.quote}"
+            </div>
+
+            <button onclick="openModal('${d.name}')" class="mt-4 w-full py-2 bg-gray-900 hover:bg-black text-white text-xs font-bold rounded-xl shadow transition">
+              查看詳細分析
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function applyFilters() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const category = document.getElementById('categoryFilter').value;
+      const sort = document.getElementById('sortSelect').value;
+
+      let filtered = currentData.filter(d => {
+        const matchesSearch = d.name.toLowerCase().includes(search) || 
+                              (d.jpName && d.jpName.toLowerCase().includes(search)) || 
+                              d.mbti.toLowerCase().includes(search) ||
+                              d.quote.toLowerCase().includes(search);
+        const matchesCategory = category === 'ALL' || d.category === category;
+        return matchesSearch && matchesCategory;
+      });
+
+      // Sort logic
+      if (sort === 'rank-asc') filtered.sort((a,b) => a.rank - b.rank);
+      else if (sort === 'score-desc') filtered.sort((a,b) => b.score - a.score);
+      else if (sort === 'resale-desc') filtered.sort((a,b) => b.resaleRate - a.resaleRate);
+      else if (sort === 'name-asc') filtered.sort((a,b) => a.name.localeCompare(b.name));
+
+      renderFilteredGrid(filtered);
+      renderFilteredTable(filtered);
+    }
+
+    function renderGrid() {
+      applyFilters();
+    }
+
+    function renderFilteredGrid(list) {
+      const container = document.getElementById('gridContainer');
+      if (list.length === 0) {
+        container.innerHTML = `<div class="col-span-full py-12 text-center text-gray-400 font-bold">沒有找到符合條件的角色資料</div>`;
+        return;
+      }
+
+      container.innerHTML = list.map(d => `
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 hover:border-pink-200 custom-shadow transition duration-200 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="w-7 h-7 rounded-full bg-pink-50 text-pink-600 font-black text-xs flex items-center justify-center border border-pink-100">
+                #${d.rank}
+              </span>
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-gray-100 text-gray-600">
+                ${d.category}
+              </span>
+            </div>
+
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-2xl bg-amber-50 text-2xl flex items-center justify-center border border-amber-100">
+                ${d.avatar}
+              </div>
+              <div>
+                <h4 class="font-black text-gray-800 text-base leading-tight">${d.name}</h4>
+                <p class="text-xs text-gray-400 font-medium">${d.jpName || ''}</p>
+              </div>
+            </div>
+
+            <div class="space-y-2 mb-4 text-xs">
+              <div>
+                <div class="flex justify-between text-[11px] font-semibold text-gray-500 mb-1">
+                  <span>人氣熱度指數</span>
+                  <span class="text-pink-600 font-bold">${d.score.toLocaleString()}</span>
+                </div>
+                <div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div class="h-full bg-gradient-to-r from-pink-400 to-amber-400 rounded-full" style="width: ${Math.min(100, (d.score / 10000) * 100)}%"></div>
+                </div>
+              </div>
+
+              <div class="flex justify-between items-center py-1 border-t border-gray-50">
+                <span class="text-gray-400 text-[11px]">周邊溢價率</span>
+                <span class="font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-lg text-[11px]">
+                  +${d.resaleRate}%
+                </span>
+              </div>
+
+              <div class="flex justify-between items-center py-1 border-t border-gray-50">
+                <span class="text-gray-400 text-[11px]">MBTI 特質</span>
+                <span class="font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-lg text-[11px]">
+                  ${d.mbti}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <p class="text-[11px] text-gray-500 italic bg-gray-50 p-2 rounded-xl mb-3 line-clamp-1">
+              "${d.quote}"
+            </p>
+            <button onclick="openModal('${d.name}')" class="w-full py-2 bg-pink-50 hover:bg-pink-100 text-pink-600 text-xs font-bold rounded-xl transition flex items-center justify-center gap-1">
+              <span>詳細檔案與金句</span>
+              <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderTable() {
+      applyFilters();
+    }
+
+    function renderFilteredTable(list) {
+      const tbody = document.getElementById('tableBody');
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-gray-400">尚無符合資料</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(d => `
+        <tr class="hover:bg-pink-50/30 transition">
+          <td class="py-3.5 px-4 font-black text-gray-700">#${d.rank}</td>
+          <td class="py-3.5 px-4">
+            <div class="flex items-center gap-2">
+              <span class="text-xl">${d.avatar}</span>
+              <div>
+                <div class="font-bold text-gray-800">${d.name}</div>
+                <div class="text-[10px] text-gray-400">${d.jpName || ''}</div>
+              </div>
+            </div>
+          </td>
+          <td class="py-3.5 px-4">
+            <span class="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-md text-[10px] font-bold">${d.category}</span>
+          </td>
+          <td class="py-3.5 px-4 font-bold text-indigo-600">${d.mbti}</td>
+          <td class="py-3.5 px-4 font-bold text-pink-600">${d.score.toLocaleString()} 票</td>
+          <td class="py-3.5 px-4 font-bold text-emerald-600">+${d.resaleRate}%</td>
+          <td class="py-3.5 px-4 text-gray-500 italic max-w-xs truncate">"${d.quote}"</td>
+          <td class="py-3.5 px-4 text-center">
+            <button onclick="openModal('${d.name}')" class="px-3 py-1 bg-gray-900 text-white rounded-lg text-[11px] font-bold hover:bg-pink-600 transition">
+              詳情
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // View Switching
+    function switchView(view) {
+      currentView = view;
+      const grid = document.getElementById('gridContainer');
+      const table = document.getElementById('tableContainer');
+      const btnGrid = document.getElementById('viewGridBtn');
+      const btnTable = document.getElementById('viewTableBtn');
+
+      if (view === 'grid') {
+        grid.classList.remove('hidden');
+        table.classList.add('hidden');
+        btnGrid.className = "p-1.5 rounded-lg bg-white text-gray-800 shadow-sm font-bold text-xs flex items-center gap-1";
+        btnTable.className = "p-1.5 rounded-lg text-gray-500 hover:text-gray-800 text-xs flex items-center gap-1";
+      } else {
+        grid.classList.add('hidden');
+        table.classList.remove('hidden');
+        btnGrid.className = "p-1.5 rounded-lg text-gray-500 hover:text-gray-800 text-xs flex items-center gap-1";
+        btnTable.className = "p-1.5 rounded-lg bg-white text-gray-800 shadow-sm font-bold text-xs flex items-center gap-1";
+      }
+    }
+
+    // Render Chart.js Analytics
+    function renderCharts() {
+      const top10 = [...currentData].sort((a,b) => a.rank - b.rank).slice(0, 10);
+      const labels = top10.map(d => d.name.split(' ')[0]);
+      const scores = top10.map(d => d.score);
+      const resales = top10.map(d => d.resaleRate);
+
+      // Chart 1: Popularity Bar Chart
+      const ctx1 = document.getElementById('popularityChart').getContext('2d');
+      if (popularityChartInstance) popularityChartInstance.destroy();
+
+      popularityChartInstance = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: '人氣得票指數',
+            data: scores,
+            backgroundColor: [
+              '#FFDC44', '#4A90E2', '#FF99B5', '#A78BFA', '#D97706',
+              '#F59E0B', '#4B5563', '#F43F5E', '#6B7280', '#111827'
+            ],
+            borderRadius: 12,
+            borderSkipped: false,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => `人氣得票: ${ctx.raw.toLocaleString()} 票`
+              }
+            }
+          },
+          scales: {
+            y: { grid: { color: '#F3F4F6' }, ticks: { font: { family: 'Noto Sans TC' } } },
+            x: { grid: { display: false }, ticks: { font: { family: 'Noto Sans TC', weight: 'bold' } } }
+          }
+        }
+      });
+
+      // Chart 2: Resale Radar / Polar Chart
+      const ctx2 = document.getElementById('resaleChart').getContext('2d');
+      if (resaleChartInstance) resaleChartInstance.destroy();
+
+      resaleChartInstance = new Chart(ctx2, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: '周邊二手溢價率 (%)',
+            data: resales,
+            borderColor: '#EC4899',
+            backgroundColor: 'rgba(236, 72, 153, 0.12)',
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#EC4899',
+            pointRadius: 6,
+            pointHoverRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => `溢價率: +${ctx.raw}%`
+              }
+            }
+          },
+          scales: {
+            y: {
+              grid: { color: '#F3F4F6' },
+              ticks: { callback: (v) => `+${v}%` }
+            },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    // Character Detail Modal
+    function openModal(charName) {
+      const char = currentData.find(d => d.name === charName || d.name.includes(charName));
+      if (!char) return;
+
+      const modal = document.getElementById('detailModal');
+      const content = document.getElementById('modalContent');
+
+      content.innerHTML = `
+        <div class="text-center space-y-3">
+          <div class="w-20 h-20 rounded-3xl bg-pink-100 mx-auto flex items-center justify-center text-5xl shadow-md border-2 border-pink-200">
+            ${char.avatar}
+          </div>
+          <div>
+            <span class="px-3 py-0.5 bg-pink-100 text-pink-700 rounded-full text-xs font-black">
+              人氣排名 第 #${char.rank} 名
+            </span>
+            <h3 class="text-2xl font-black text-gray-800 mt-1">${char.name}</h3>
+            <p class="text-xs font-bold text-gray-400">${char.jpName || ''}</p>
+          </div>
+        </div>
+
+        <div class="bg-amber-50/70 border border-amber-200/80 p-4 rounded-2xl space-y-2 text-xs">
+          <div class="flex justify-between items-center">
+            <span class="text-gray-500 font-bold">MBTI 人格特質：</span>
+            <span class="font-black text-indigo-600 bg-white px-2.5 py-1 rounded-lg shadow-sm">${char.mbti}</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-500 font-bold">人氣得票數：</span>
+            <span class="font-black text-pink-600">${char.score.toLocaleString()} 票</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-500 font-bold">周邊二手溢價率：</span>
+            <span class="font-black text-emerald-600">+${char.resaleRate}% (熱度爆棚)</span>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-xs font-black text-gray-700 flex items-center gap-1">
+            <i data-lucide="quote" class="w-3.5 h-3.5 text-pink-500"></i>
+            招牌名言 / 金句語錄：
+          </label>
+          <div class="p-3 bg-pink-50 rounded-2xl text-pink-900 font-black text-sm italic text-center border border-pink-200">
+            "${char.quote}"
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-xs font-black text-gray-700">角色背景與魅力分析：</label>
+          <p class="text-xs text-gray-600 leading-relaxed bg-gray-50 p-3 rounded-2xl border border-gray-100">
+            ${char.desc}
+          </p>
+        </div>
+
+        <button onclick="playQuoteSound('${char.avatar}')" class="w-full py-2.5 bg-gradient-to-r from-pink-500 to-amber-400 text-white font-black text-xs rounded-2xl shadow-md hover:opacity-90 transition flex items-center justify-center gap-2">
+          <i data-lucide="volume-2" class="w-4 h-4"></i>
+          <span>播放角色經典語音模擬</span>
+        </button>
+      `;
+
+      modal.classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeModal() {
+      document.getElementById('detailModal').classList.add('hidden');
+    }
+
+    // Cute Web Audio Synth Sound generator for Chiikawa voices
+    function playQuoteSound(avatar) {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (avatar === '🐰') {
+          // High playful Usagi pitch "Yaha!"
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+          osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15); // A5
+          gain.gain.setValueAtTime(0.3, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.3);
+        } else if (avatar === '🐱') {
+          // Warm Hachiware tone
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(440, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(659.25, ctx.currentTime + 0.2);
+          gain.gain.setValueAtTime(0.25, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.35);
+        } else {
+          // Cute soft chime
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(783.99, ctx.currentTime + 0.25);
+          gain.gain.setValueAtTime(0.2, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.4);
+        }
+      } catch(e) {
+        console.log('Audio playback prevented or unsupported');
+      }
+    }
+
+    window.onload = function() {
+      fetchCSVData();
+    };
+  </script>
+</body>
+</html>

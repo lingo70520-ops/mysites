@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的 3D 萌萌貼圖</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: linear-gradient(135deg, #FFF5F2 0%, #F3E8FF 100%);
+            min-height: 100vh;
+        }
+
+        .sticker-card {
+            backdrop-filter: blur(12px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        .sticker-card:hover {
+            transform: scale(1.05) rotate(2deg);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+    </style>
+</head>
+<body class="antialiased text-slate-800">
+
+    <div class="max-w-7xl mx-auto px-6 py-16">
+        <!-- Header -->
+        <header class="text-center mb-20">
+            <h1 class="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500 drop-shadow-sm mb-4 tracking-tight">
+                我的 3D 萌萌貼圖
+            </h1>
+            <p class="text-lg text-slate-500 font-medium">由 邱于紋製作 | 精緻數位貼圖集</p>
+        </header>
+
+        <!-- Gallery Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 justify-items-center">
+            
+            <!-- Item 1 -->
+            <div class="sticker-card w-full max-w-[360px] bg-white/70 border border-white/60 p-6 rounded-[24px] flex flex-col items-center">
+                <div class="w-full h-64 overflow-hidden rounded-[16px] mb-4 shadow-inner bg-slate-100 flex items-center justify-center">
+                    <img src='https://opal.google/board/blobs/e80adb4c-70d5-43c8-a71b-635796db3d6c' alt='media_1' class="w-full h-full object-contain" />
+                </div>
+                <div class="text-center">
+                    <span class="inline-block px-4 py-1 rounded-full bg-pink-100 text-pink-600 text-sm font-bold">Design 01</span>
+                </div>
+            </div>
+
+            <!-- Item 2 -->
+            <div class="sticker-card w-full max-w-[360px] bg-white/70 border border-white/60 p-6 rounded-[24px] flex flex-col items-center">
+                <div class="w-full h-64 overflow-hidden rounded-[16px] mb-4 shadow-inner bg-slate-100 flex items-center justify-center">
+                    <img src='https://opal.google/board/blobs/83c01405-ffcf-4298-bcf5-34ed5c02879d' alt='media_2' class="w-full h-full object-contain" />
+                </div>
+                <div class="text-center">
+                    <span class="inline-block px-4 py-1 rounded-full bg-purple-100 text-purple-600 text-sm font-bold">Design 02</span>
+                </div>
+            </div>
+
+            <!-- Item 3 -->
+            <div class="sticker-card w-full max-w-[360px] bg-white/70 border border-white/60 p-6 rounded-[24px] flex flex-col items-center">
+                <div class="w-full h-64 overflow-hidden rounded-[16px] mb-4 shadow-inner bg-slate-100 flex items-center justify-center">
+                    <img src='https://opal.google/board/blobs/2dd085a0-21cc-4f34-96d8-ce4163682840' alt='media_3' class="w-full h-full object-contain" />
+                </div>
+                <div class="text-center">
+                    <span class="inline-block px-4 py-1 rounded-full bg-orange-100 text-orange-600 text-sm font-bold">Design 03</span>
+                </div>
+            </div>
+
+            <!-- Item 4 -->
+            <div class="sticker-card w-full max-w-[360px] bg-white/70 border border-white/60 p-6 rounded-[24px] flex flex-col items-center">
+                <div class="w-full h-64 overflow-hidden rounded-[16px] mb-4 shadow-inner bg-slate-100 flex items-center justify-center">
+                    <img src='https://opal.google/board/blobs/792170f4-3461-477c-9d00-d6f5c178b54d' alt='media_4' class="w-full h-full object-contain" />
+                </div>
+                <div class="text-center">
+                    <span class="inline-block px-4 py-1 rounded-full bg-blue-100 text-blue-600 text-sm font-bold">Design 04</span>
+                </div>
+            </div>
+
+            <!-- Item 5 (Centered by flex alignment in the grid parent) -->
+            <div class="lg:col-span-1 md:col-start-2 sticker-card w-full max-w-[360px] bg-white/70 border border-white/60 p-6 rounded-[24px] flex flex-col items-center">
+                <div class="w-full h-64 overflow-hidden rounded-[16px] mb-4 shadow-inner bg-slate-100 flex items-center justify-center">
+                    <img src='https://opal.google/board/blobs/165e7602-9c22-4ca0-b6d3-a59a935313c5' alt='media_5' class="w-full h-full object-contain" />
+                </div>
+                <div class="text-center">
+                    <span class="inline-block px-4 py-1 rounded-full bg-emerald-100 text-emerald-600 text-sm font-bold">Design 05</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
