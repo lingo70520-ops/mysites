@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>台灣旅遊景點互動地圖 Taiwan Travel Map</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Leaflet.js CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <!-- Google Fonts Inter & Noto Sans TC -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans TC', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            overflow: hidden;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Leaflet Map Custom Marker Styles */
+        .custom-div-icon {
+            background: transparent;
+            border: none;
+        }
+
+        .marker-pin {
+            width: 36px;
+            height: 36px;
+            border-radius: 50% 50% 50% 0;
+            position: absolute;
+            transform: rotate(-45deg);
+            left: 50%;
+            top: 50%;
+            margin: -20px 0 0 -18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: all 0.2s ease-in-out;
+        }
+
+        .marker-pin::after {
+            content: '';
+            width: 20px;
+            height: 20px;
+            margin: 8px 0 0 8px;
+            background: #fff;
+            position: absolute;
+            border-radius: 50%;
+        }
+
+        .marker-pin i {
+            transform: rotate(45deg);
+            z-index: 10;
+            font-size: 14px;
+        }
+
+        .marker-pin.active {
+            transform: rotate(-45deg) scale(1.25);
+            z-index: 1000 !important;
+        }
+
+        /* Pulse animation for active pin */
+        @keyframes pinPulse {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.15); opacity: 0.4; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+
+        /* Custom Popup Styling */
+        .leaflet-popup-content-wrapper {
+            padding: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+        .leaflet-popup-content {
+            margin: 0;
+            width: 260px !important;
+        }
+        .leaflet-container a.leaflet-popup-close-button {
+            top: 8px;
+            right: 8px;
+            color: #fff;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+            font-size: 18px;
+            z-index: 10;
+        }
+
+        /* Glassmorphism support */
+        .glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 h-screen w-screen flex flex-col overflow-hidden">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-slate-900 text-white h-16 px-4 md:px-6 flex items-center justify-between z-30 shadow-md shrink-0">
+        <div class="flex items-center space-x-3">
+            <div class="bg-brand-500 text-white p-2 rounded-lg flex items-center justify-center shadow-lg shadow-brand-500/30">
+                <i class="fa-solid me-0 fa-map-location-dot text-xl"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-lg md:text-xl tracking-tight leading-none flex items-center gap-2">
+                    台灣旅遊景點互動地圖
+                    <span class="text-xs bg-brand-500/20 text-brand-400 px-2 py-0.5 rounded-full font-normal hidden sm:inline-block">RWD Web App</span>
+                </h1>
+                <p class="text-xs text-slate-400 mt-0.5">Explore Beautiful Taiwan Attractions</p>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-2 sm:space-x-4">
+            <!-- Favorite Counter Button -->
+            <button id="btn-show-favorites" class="flex items-center space-x-1.5 bg-slate-800 hover:bg-slate-700 text-amber-400 px-3 py-1.5 rounded-lg text-sm font-medium transition border border-slate-700">
+                <i class="fa-solid fa-star"></i>
+                <span class="hidden sm:inline">我的收藏</span>
+                <span id="fav-count-badge" class="bg-amber-500 text-slate-900 text-xs font-bold px-1.5 py-0.2 rounded-full">0</span>
+            </button>
+
+            <!-- Reset Filter Button -->
+            <button id="btn-reset-filters" class="text-slate-400 hover:text-white p-2 rounded-lg hover:bg-slate-800 transition text-sm flex items-center gap-1" title="重設所有條件">
+                <i class="fa-solid fa-rotate-right"></i>
+                <span class="hidden md:inline">重設</span>
+            </button>
+
+            <!-- Mobile View Switcher Toggle -->
+            <div class="flex md:hidden bg-slate-800 p-1 rounded-lg border border-slate-700">
+                <button id="mobile-toggle-map" class="px-3 py-1 text-xs font-medium rounded-md bg-brand-500 text-white shadow">
+                    <i class="fa-solid fa-map me-1"></i>地圖
+                </button>
+                <button id="mobile-toggle-list" class="px-3 py-1 text-xs font-medium rounded-md text-slate-300 hover:text-white">
+                    <i class="fa-solid fa-list me-1"></i>列表
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 flex relative overflow-hidden">
+
+        <!-- Sidebar / Filter & Attraction List Panel -->
+        <aside id="sidebar" class="w-full md:w-96 lg:w-[400px] bg-white flex flex-col h-full border-r border-slate-200 z-20 transition-all duration-300 absolute md:relative inset-0 md:inset-auto">
+            
+            <!-- Search & Filter Controls Container -->
+            <div class="p-4 border-b border-slate-100 bg-slate-50/50 space-y-3 shrink-0">
+                <!-- Search Input -->
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="search-input" placeholder="搜尋景點名稱、縣市或簡介..." 
+                           class="w-full pl-10 pr-9 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-sm">
+                    <button id="clear-search" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- Region Filters (Pills) -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">地理區域</label>
+                    <div id="region-filters" class="flex flex-wrap gap-1.5">
+                        <button data-region="all" class="region-btn active px-3 py-1 rounded-lg text-xs font-medium bg-brand-600 text-white shadow-sm transition">全部</button>
+                        <button data-region="北部" class="region-btn px-3 py-1 rounded-lg text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition">北部</button>
+                        <button data-region="中部" class="region-btn px-3 py-1 rounded-lg text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition">中部</button>
+                        <button data-region="南部" class="region-btn px-3 py-1 rounded-lg text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition">南部</button>
+                        <button data-region="東部" class="region-btn px-3 py-1 rounded-lg text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition">東部</button>
+                        <button data-region="離島" class="region-btn px-3 py-1 rounded-lg text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition">離島</button>
+                    </div>
+                </div>
+
+                <!-- Category Filters -->
+                <div class="flex items-center justify-between pt-1">
+                    <div class="flex-1 me-2">
+                        <select id="category-select" class="w-full bg-white border border-slate-200 text-slate-700 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            <option value="all">所有主題分類</option>
+                            <option value="自然風光">自然風光</option>
+                            <option value="歷史人文">歷史人文</option>
+                            <option value="休閒農場">休閒農場</option>
+                            <option value="藝術文化">藝術文化</option>
+                            <option value="特色商圈">特色商圈</option>
+                        </select>
+                    </div>
+                    <div class="text-xs text-slate-500 font-medium">
+                        共 <span id="attraction-count" class="text-brand-600 font-bold">0</span> 個景點
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attractions List -->
+            <div id="attractions-list" class="flex-1 overflow-y-auto p-4 space-y-3">
+                <!-- Cards will be dynamically inserted here -->
+            </div>
+            
+            <!-- Empty State Display -->
+            <div id="empty-state" class="hidden flex-1 flex flex-col items-center justify-center p-6 text-center text-slate-400">
+                <i class="fa-solid fa-map-location text-5xl mb-3 text-slate-300"></i>
+                <p class="font-medium text-slate-600">找不到符合條件的景點</p>
+                <p class="text-xs text-slate-400 mt-1">請嘗試調整搜尋關鍵字或清除篩選條件</p>
+                <button id="btn-reset-empty" class="mt-4 px-4 py-2 bg-brand-50 text-brand-600 hover:bg-brand-100 rounded-lg text-xs font-semibold transition">
+                    清除篩選條件
+                </button>
+            </div>
+        </aside>
+
+        <!-- Map Container -->
+        <div id="map-container" class="flex-1 h-full w-full relative z-10">
+            <!-- Leaflet Map Mount Point -->
+            <div id="map" class="h-full w-full"></div>
+
+            <!-- Floating Quick Stats / Quick Tools on Map -->
+            <div class="absolute bottom-6 right-4 z-[500] hidden sm:flex flex-col gap-2">
+                <button id="btn-locate-me" class="w-10 h-10 bg-white text-slate-700 hover:text-brand-600 rounded-full shadow-lg border border-slate-200 flex items-center justify-center transition" title="定位我的位置">
+                    <i class="fa-solid fa-location-crosshairs text-base"></i>
+                </button>
+                <button id="btn-fit-taiwan" class="w-10 h-10 bg-white text-slate-700 hover:text-brand-600 rounded-full shadow-lg border border-slate-200 flex items-center justify-center transition" title="重置台灣全圖視角">
+                    <i class="fa-solid fa-compress text-base"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Attraction Detail Modal -->
+    <div id="detail-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+        <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-hidden shadow-2xl flex flex-col transform scale-95 transition-all duration-300" id="modal-card">
+            <!-- Modal Header Image -->
+            <div class="relative h-56 bg-slate-800 shrink-0">
+                <img id="modal-img" src="" alt="" class="w-full h-full object-cover">
+                <button id="close-modal" class="absolute top-3 right-3 bg-black/50 hover:bg-black/70 text-white w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <div class="absolute bottom-3 left-3 right-3 flex justify-between items-end">
+                    <span id="modal-category" class="px-2.5 py-1 bg-brand-600/90 text-white text-xs font-semibold rounded-full backdrop-blur-md">
+                        自然風光
+                    </span>
+                    <button id="modal-fav-btn" class="bg-white/90 hover:bg-white text-slate-700 p-2 rounded-full shadow backdrop-blur-md transition flex items-center justify-center">
+                        <i class="fa-regular fa-star text-amber-500 text-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="p-5 overflow-y-auto space-y-4">
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <h2 id="modal-title" class="text-xl font-bold text-slate-900">景點名稱</h2>
+                        <div class="flex items-center text-amber-500 font-semibold text-sm">
+                            <i class="fa-solid fa-star me-1"></i>
+                            <span id="modal-rating">4.8</span>
+                        </div>
+                    </div>
+                    <p id="modal-location" class="text-xs text-slate-500 flex items-center gap-1">
+                        <i class="fa-solid fa-location-dot text-rose-500"></i>
+                        <span>縣市區域</span>
+                    </p>
+                </div>
+
+                <hr class="border-slate-100">
+
+                <div>
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">景點簡介</h3>
+                    <p id="modal-description" class="text-sm text-slate-600 leading-relaxed"></p>
+                </div>
+
+                <div class="bg-slate-50 rounded-xl p-3 space-y-2 text-xs text-slate-600 border border-slate-100">
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-clock text-slate-400 mt-0.5"></i>
+                        <div>
+                            <span class="font-semibold text-slate-700">開放時間：</span>
+                            <span id="modal-hours">全天開放</span>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-map-pin text-slate-400 mt-0.5"></i>
+                        <div>
+                            <span class="font-semibold text-slate-700">詳細地址：</span>
+                            <span id="modal-address">詳細地址資訊</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="pt-2 flex gap-3">
+                    <a id="modal-navigate-btn" href="#" target="_blank" rel="noopener noreferrer" 
+                       class="flex-1 bg-brand-600 hover:bg-brand-700 text-white py-2.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-brand-600/30 transition">
+                        <i class="fa-solid fa-diamond-turn-right"></i>
+                        Google 地圖導航
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // ==========================================
+        // 1. Taiwan Tourist Attractions Dataset
+        // ==========================================
+        const TAIWAN_ATTRACTIONS = [
+            {
+                id: 'spot-01',
+                name: '九份老街',
+                region: '北部',
+                city: '新北市瑞芳區',
+                category: '特色商圈',
+                lat: 25.1088,
+                lng: 121.8439,
+                rating: 4.6,
+                image: 'https://images.unsplash.com/photo-1571474004502-c1def214ac6d?auto=format&fit=crop&w=800&q=80',
+                description: '獨特的山城建築與懷舊老街風格，滿滿的紅燈籠與古色古香小吃，如阿柑姨芋圓、草仔粿，是國內外遊客必訪景點。',
+                hours: '08:00 - 19:00 (店家營業時間各異)',
+                address: '新北市瑞芳區基山街'
+            },
+            {
+                id: 'spot-02',
+                name: '國立故宮博物院',
+                region: '北部',
+                city: '臺北市士林區',
+                category: '藝術文化',
+                lat: 25.1024,
+                lng: 121.5485,
+                rating: 4.7,
+                image: 'https://images.unsplash.com/photo-1598971861713-54ad16a7e72e?auto=format&fit=crop&w=800&q=80',
+                description: '典藏近70萬件中華珍貴文物與藝術品，包含知名展品翠玉白菜、肉形石等，為全球最著名的博物館之一。',
+                hours: '09:00 - 17:00 (週一休館)',
+                address: '臺北市士林區至善路二段221號'
+            },
+            {
+                id: 'spot-03',
+                name: '野柳地質公園',
+                region: '北部',
+                city: '新北市萬里區',
+                category: '自然風光',
+                lat: 25.2064,
+                lng: 121.6905,
+                rating: 4.5,
+                image: 'https://images.unsplash.com/photo-1508248467877-a8e03598f192?auto=format&fit=crop&w=800&q=80',
+                description: '經過千百年海蝕風化形成的罕見地質奇觀，其中以「女王頭」、「仙女鞋」、「燭台石」等奇石聞名世界。',
+                hours: '08:00 - 17:00',
+                address: '新北市萬里區港東路167-1號'
+            },
+            {
+                id: 'spot-04',
+                name: '日月潭國家風景區',
+                region: '中部',
+                city: '南投縣魚池鄉',
+                category: '自然風光',
+                lat: 23.8517,
+                lng: 120.9152,
+                rating: 4.8,
+                image: 'https://images.unsplash.com/photo-1623945202863-f0faaa091bc2?auto=format&fit=crop&w=800&q=80',
+                description: '台灣最大的天然湖泊，以日潭與月潭交界之美聞名。可體驗環湖自行車道（全球最美車道之一）、搭乘遊艇與纜車。',
+                hours: '全天開放',
+                address: '南投縣魚池鄉中山路599號'
+            },
+            {
+                id: 'spot-05',
+                name: '清境農場',
+                region: '中部',
+                city: '南投縣仁愛鄉',
+                category: '休閒農場',
+                lat: 24.0585,
+                lng: 121.1627,
+                rating: 4.6,
+                image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
+                description: '位居高海拔地區，擁有廣袤綿延的高山草原「青青草原」，可欣賞綿羊秀、觀光馬術秀與高山連峰壯麗景緻。',
+                hours: '08:00 - 17:00',
+                address: '南投縣仁愛鄉仁和路170號'
+            },
+            {
+                id: 'spot-06',
+                name: '阿里山國家森林遊樂區',
+                region: '南部',
+                city: '嘉義縣阿里山鄉',
+                category: '自然風光',
+                lat: 23.5111,
+                lng: 120.8030,
+                rating: 4.8,
+                image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80',
+                description: '以「日出、雲海、晚霞、森林、神木」五奇享譽中外，每年春天櫻花季更吸引無數遊客前來搭乘森林小火車賞花。',
+                hours: '24小時開放',
+                address: '嘉義縣阿里山鄉59號'
+            },
+            {
+                id: 'spot-07',
+                name: '奇美博物館',
+                region: '南部',
+                city: '臺南市仁德區',
+                category: '藝術文化',
+                lat: 22.9345,
+                lng: 120.2260,
+                rating: 4.8,
+                image: 'https://images.unsplash.com/photo-1565008447742-97f6f38c985c?auto=format&fit=crop&w=800&q=80',
+                description: '西洋古典宮殿風格建築，擁有極豐富的西洋藝術、西洋樂器、兵器與自然史展品，園區內阿波羅噴泉與繆思廣場極具歐洲風情。',
+                hours: '09:30 - 17:30 (週三休館)',
+                address: '臺南市仁德區文華路二段666號'
+            },
+            {
+                id: 'spot-08',
+                name: '駁二藝術特區',
+                region: '南部',
+                city: '高雄市鹽埕區',
+                category: '藝術文化',
+                lat: 22.6198,
+                lng: 120.2818,
+                rating: 4.6,
+                image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80',
+                description: '舊港口碼頭倉庫改造為前衛前瞻的當代藝術園區，充滿大型戶外裝置藝術、文創商店、展演空間與美食餐廳。',
+                hours: '10:00 - 18:00 (週五至週日延長至20:00)',
+                address: '高雄市鹽埕區大勇路1號'
+            },
+            {
+                id: 'spot-09',
+                name: '墾丁國家公園',
+                region: '南部',
+                city: '屏東縣恆春鎮',
+                category: '自然風光',
+                lat: 21.9481,
+                lng: 120.7797,
+                rating: 4.7,
+                image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
+                description: '台灣首座國家公園，擁有豐富的珊瑚礁地形、白沙灣、鵝鑾鼻燈塔與熱帶海洋生態，是水上活動與渡假避暑首選。',
+                hours: '全天開放',
+                address: '屏東縣恆春鎮竹沙路28號'
+            },
+            {
+                id: 'spot-10',
+                name: '太魯閣國家公園',
+                region: '東部',
+                city: '花蓮縣秀林鄉',
+                category: '自然風光',
+                lat: 24.1583,
+                lng: 121.6222,
+                rating: 4.9,
+                image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80',
+                description: '世界級的大理石峽谷景觀，雄偉絕壁、湍急溪流與九曲洞、燕子口等步道，展現大自然鬼斧神工的磅礡氣勢。',
+                hours: '24小時開放 (步道開放狀況需依官方公告)',
+                address: '花蓮縣秀林鄉富世291號'
+            },
+            {
+                id: 'spot-11',
+                name: '三仙台風景區',
+                region: '東部',
+                city: '臺東縣成功鎮',
+                category: '自然風光',
+                lat: 23.1281,
+                lng: 121.4111,
+                rating: 4.6,
+                image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80',
+                description: '由離岸小島與地質海蝕景觀組成，最吸睛的亮點是如長龍般跨越海面的八拱跨海步橋，更是迎接全台第一道曙光的熱門地點。',
+                hours: '08:30 - 17:00',
+                address: '臺東縣成功鎮基翬路74號'
+            },
+            {
+                id: 'spot-12',
+                name: '澎湖跨海大橋',
+                region: '離島',
+                city: '澎湖縣白沙鄉',
+                category: '歷史人文',
+                lat: 23.6508,
+                lng: 119.5303,
+                rating: 4.5,
+                image: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=800&q=80',
+                description: '連接白沙鄉與西嶼鄉的著名標誌性大橋，全長近2.5公里。橋頭白色拱門是前往澎湖旅遊必拍照打卡地標。',
+                hours: '全天開放',
+                address: '澎湖縣白沙鄉通梁村'
+            }
+        ];
+
+        // ==========================================
+        // 2. Application State & Colors
+        // ==========================================
+        let map;
+        let markersGroup;
+        let activeMarker = null;
+        
+        let state = {
+            searchQuery: '',
+            selectedRegion: 'all',
+            selectedCategory: 'all',
+            showFavoritesOnly: false,
+            favorites: JSON.parse(localStorage.getItem('taiwan_travel_favs') || '[]'),
+            currentMobileView: 'map' // 'map' or 'list'
+        };
+
+        // Category icon & color mapping
+        const CATEGORY_STYLES = {
+            '自然風光': { icon: 'fa-tree', color: '#10b981' },
+            '歷史人文': { icon: 'fa-landmark', color: '#f59e0b' },
+            '休閒農場': { icon: 'fa-tractor', color: '#84cc16' },
+            '藝術文化': { icon: 'fa-palette', color: '#8b5cf6' },
+            '特色商圈': { icon: 'fa-store', color: '#ec4899' },
+            'default': { icon: 'fa-location-dot', color: '#3b82f6' }
+        };
+
+        // ==========================================
+        // 3. Map Initialization
+        // ==========================================
+        function initMap() {
+            // Taiwan geographic center coords: ~23.8, 120.9, Zoom level 8
+            map = L.map('map', {
+                zoomControl: false
+            }).setView([23.8, 120.9], 8);
+
+            // Add standard Leaflet Zoom Control to Top Right
+            L.control.zoom({ position: 'topright' }).addTo(map);
+
+            // OpenStreetMap Tile Layer
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // Create LayerGroup for markers
+            markersGroup = L.layerGroup().addTo(map);
+        }
+
+        // ==========================================
+        // 4. Marker Rendering & Interactions
+        // ==========================================
+        function createCustomIcon(category, isActive = false) {
+            const config = CATEGORY_STYLES[category] || CATEGORY_STYLES['default'];
+            const activeClass = isActive ? 'active' : '';
+            
+            const html = `
+                <div class="marker-pin ${activeClass}" style="background-color: ${config.color}">
+                    <i class="fa-solid ${config.icon} text-white"></i>
+                </div>
+            `;
+
+            return L.divIcon({
+                className: 'custom-div-icon',
+                html: html,
+                iconSize: [36, 36],
+                iconAnchor: [18, 36],
+                popupAnchor: [0, -32]
+            });
+        }
+
+        function renderMarkers(attractions) {
+            markersGroup.clearLayers();
+
+            attractions.forEach(item => {
+                const isFav = state.favorites.includes(item.id);
+                const marker = L.marker([item.lat, item.lng], {
+                    icon: createCustomIcon(item.category)
+                });
+
+                // Attach metadata to marker instance
+                marker.attractionId = item.id;
+
+                // Popup content HTML
+                const popupHtml = `
+                    <div class="overflow-hidden">
+                        <div class="relative h-28 bg-slate-200">
+                            <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover">
+                            <span class="absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-sm">
+                                ${item.category}
+                            </span>
+                        </div>
+                        <div class="p-3">
+                            <div class="flex items-center justify-between mb-1">
+                                <h4 class="font-bold text-slate-800 text-sm leading-tight">${item.name}</h4>
+                                <div class="text-xs font-semibold text-amber-500 flex items-center">
+                                    <i class="fa-solid fa-star me-1 text-[10px]"></i>${item.rating}
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-500 mb-2 line-clamp-2">${item.description}</p>
+                            <div class="flex items-center justify-between pt-1 border-t border-slate-100">
+                                <button onclick="toggleFavorite('${item.id}')" class="text-xs ${isFav ? 'text-amber-500' : 'text-slate-400'} hover:text-amber-500 transition">
+                                    <i class="${isFav ? 'fa-solid' : 'fa-regular'} fa-star me-1"></i>${isFav ? '已收藏' : '收藏'}
+                                </button>
+                                <button onclick="openDetailModal('${item.id}')" class="text-xs font-semibold text-brand-600 hover:text-brand-700">
+                                    詳細資訊 <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                marker.bindPopup(popupHtml);
+
+                marker.on('click', () => {
+                    highlightAttractionCard(item.id);
+                });
+
+                markersGroup.addLayer(marker);
+            });
+        }
+
+        // ==========================================
+        // 5. Attraction List Rendering
+        // ==========================================
+        function renderAttractionList(attractions) {
+            const listEl = document.getElementById('attractions-list');
+            const emptyEl = document.getElementById('empty-state');
+            const countEl = document.getElementById('attraction-count');
+
+            countEl.textContent = attractions.length;
+
+            if (attractions.length === 0) {
+                listEl.classList.add('hidden');
+                emptyEl.classList.remove('hidden');
+                return;
+            }
+
+            listEl.classList.remove('hidden');
+            emptyEl.classList.add('hidden');
+
+            listEl.innerHTML = attractions.map(item => {
+                const isFav = state.favorites.includes(item.id);
+                const categoryStyle = CATEGORY_STYLES[item.category] || CATEGORY_STYLES['default'];
+
+                return `
+                    <div id="card-${item.id}" 
+                         onclick="selectAttraction('${item.id}')"
+                         class="attraction-card bg-white rounded-xl p-3 border border-slate-200/80 hover:border-brand-500/50 hover:shadow-md transition cursor-pointer flex gap-3 group relative">
+                        
+                        <!-- Thumbnail Image -->
+                        <div class="w-24 h-24 rounded-lg bg-slate-100 overflow-hidden shrink-0 relative">
+                            <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                            <span class="absolute top-1.5 left-1.5 bg-black/60 text-white text-[9px] px-1.5 py-0.5 rounded backdrop-blur-sm">
+                                ${item.region}
+                            </span>
+                        </div>
+
+                        <!-- Info Content -->
+                        <div class="flex-1 min-w-0 flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-start justify-between gap-1">
+                                    <h3 class="font-bold text-slate-800 text-sm group-hover:text-brand-600 transition truncate">${item.name}</h3>
+                                    <button onclick="event.stopPropagation(); toggleFavorite('${item.id}');" class="text-slate-300 hover:text-amber-500 p-1 transition">
+                                        <i class="${isFav ? 'fa-solid text-amber-500' : 'fa-regular'} fa-star text-sm"></i>
+                                    </button>
+                                </div>
+                                <div class="flex items-center gap-2 mt-0.5 mb-1 text-[11px] text-slate-500">
+                                    <span class="inline-flex items-center gap-1" style="color: ${categoryStyle.color}">
+                                        <i class="fa-solid ${categoryStyle.icon}"></i> ${item.category}
+                                    </span>
+                                    <span>•</span>
+                                    <span class="text-amber-500 font-medium">
+                                        <i class="fa-solid fa-star text-[10px] me-0.5"></i>${item.rating}
+                                    </span>
+                                </div>
+                                <p class="text-xs text-slate-500 line-clamp-1">${item.description}</p>
+                            </div>
+
+                            <div class="flex items-center justify-between text-[11px] text-slate-400 pt-1">
+                                <span class="truncate"><i class="fa-solid fa-location-dot me-1"></i>${item.city}</span>
+                                <span class="text-brand-600 font-medium hover:underline flex items-center gap-0.5">
+                                    查看細節
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ==========================================
+        // 6. Filtering & Search Logic
+        // ==========================================
+        function getFilteredAttractions() {
+            return TAIWAN_ATTRACTIONS.filter(item => {
+                // Search match
+                const matchSearch = state.searchQuery === '' || 
+                    item.name.toLowerCase().includes(state.searchQuery.toLowerCase()) ||
+                    item.city.toLowerCase().includes(state.searchQuery.toLowerCase()) ||
+                    item.description.toLowerCase().includes(state.searchQuery.toLowerCase());
+
+                // Region match
+                const matchRegion = state.selectedRegion === 'all' || item.region === state.selectedRegion;
+
+                // Category match
+                const matchCategory = state.selectedCategory === 'all' || item.category === state.selectedCategory;
+
+                // Favorites match
+                const matchFav = !state.showFavoritesOnly || state.favorites.includes(item.id);
+
+                return matchSearch && matchRegion && matchCategory && matchFav;
+            });
+        }
+
+        function updateUI() {
+            const filteredData = getFilteredAttractions();
+            renderAttractionList(filteredData);
+            renderMarkers(filteredData);
+            updateFavoriteCounter();
+        }
+
+        function selectAttraction(id) {
+            const item = TAIWAN_ATTRACTIONS.find(a => a.id === id);
+            if (!item) return;
+
+            // Fly map to target attraction coordinates
+            map.flyTo([item.lat, item.lng], 13, {
+                animate: true,
+                duration: 1.2
+            });
+
+            // Find matching marker and open popup
+            markersGroup.eachLayer(layer => {
+                if (layer.attractionId === id) {
+                    layer.openPopup();
+                }
+            });
+
+            highlightAttractionCard(id);
+
+            // On mobile view, automatically switch to map view when card clicked
+            if (window.innerWidth < 768 && state.currentMobileView === 'list') {
+                switchMobileView('map');
+            }
+        }
+
+        function highlightAttractionCard(id) {
+            document.querySelectorAll('.attraction-card').forEach(card => {
+                card.classList.remove('border-brand-500', 'bg-brand-50/30', 'ring-1', 'ring-brand-500');
+            });
+
+            const targetCard = document.getElementById(`card-${id}`);
+            if (targetCard) {
+                targetCard.classList.add('border-brand-500', 'bg-brand-50/30', 'ring-1', 'ring-brand-500');
+                targetCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        // ==========================================
+        // 7. Favorites Management
+        // ==========================================
+        function toggleFavorite(id) {
+            const index = state.favorites.indexOf(id);
+            if (index > -1) {
+                state.favorites.splice(index, 1);
+            } else {
+                state.favorites.push(id);
+            }
+
+            // Save to localStorage
+            localStorage.setItem('taiwan_travel_favs', JSON.stringify(state.favorites));
+
+            // Sync Modal favorite icon if open
+            updateModalFavButton(id);
+
+            // Update UI
+            updateUI();
+        }
+
+        function updateFavoriteCounter() {
+            const badge = document.getElementById('fav-count-badge');
+            badge.textContent = state.favorites.length;
+        }
+
+        // ==========================================
+        // 8. Detail Modal Operations
+        // ==========================================
+        function openDetailModal(id) {
+            const item = TAIWAN_ATTRACTIONS.find(a => a.id === id);
+            if (!item) return;
+
+            document.getElementById('modal-img').src = item.image;
+            document.getElementById('modal-title').textContent = item.name;
+            document.getElementById('modal-category').textContent = item.category;
+            document.getElementById('modal-rating').textContent = item.rating;
+            document.getElementById('modal-location').querySelector('span').textContent = `${item.region} • ${item.city}`;
+            document.getElementById('modal-description').textContent = item.description;
+            document.getElementById('modal-hours').textContent = item.hours;
+            document.getElementById('modal-address').textContent = item.address;
+
+            // Navigation URL (Google Maps directions)
+            const navUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.name)}&query_place_id=${item.lat},${item.lng}`;
+            document.getElementById('modal-navigate-btn').href = navUrl;
+
+            // Modal Favorite Button Action
+            const favBtn = document.getElementById('modal-fav-btn');
+            favBtn.onclick = () => toggleFavorite(item.id);
+            updateModalFavButton(item.id);
+
+            // Show Modal with smooth fade in
+            const modal = document.getElementById('detail-modal');
+            const card = document.getElementById('modal-card');
+            
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            card.classList.remove('scale-95');
+            card.classList.add('scale-100');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('detail-modal');
+            const card = document.getElementById('modal-card');
+            
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            card.classList.remove('scale-100');
+            card.classList.add('scale-95');
+        }
+
+        function updateModalFavButton(id) {
+            const isFav = state.favorites.includes(id);
+            const favBtn = document.getElementById('modal-fav-btn');
+            favBtn.innerHTML = `<i class="${isFav ? 'fa-solid text-amber-500' : 'fa-regular text-slate-500'} fa-star text-lg"></i>`;
+        }
+
+        // ==========================================
+        // 9. Mobile RWD Switcher & Event Listeners
+        // ==========================================
+        function switchMobileView(view) {
+            state.currentMobileView = view;
+            const sidebar = document.getElementById('sidebar');
+            const mapContainer = document.getElementById('map-container');
+            const btnMap = document.getElementById('mobile-toggle-map');
+            const btnList = document.getElementById('mobile-toggle-list');
+
+            if (view === 'map') {
+                sidebar.classList.add('hidden', 'md:flex');
+                mapContainer.classList.remove('hidden');
+                
+                btnMap.className = "px-3 py-1 text-xs font-medium rounded-md bg-brand-500 text-white shadow";
+                btnList.className = "px-3 py-1 text-xs font-medium rounded-md text-slate-300 hover:text-white";
+                
+                // Recalculate Leaflet map size on view toggle
+                setTimeout(() => map.invalidateSize(), 100);
+            } else {
+                sidebar.classList.remove('hidden');
+                sidebar.classList.add('w-full');
+                mapContainer.classList.add('hidden', 'md:block');
+
+                btnList.className = "px-3 py-1 text-xs font-medium rounded-md bg-brand-500 text-white shadow";
+                btnMap.className = "px-3 py-1 text-xs font-medium rounded-md text-slate-300 hover:text-white";
+            }
+        }
+
+        function setupEventListeners() {
+            // Search Input Event
+            const searchInput = document.getElementById('search-input');
+            const clearSearchBtn = document.getElementById('clear-search');
+
+            searchInput.addEventListener('input', (e) => {
+                state.searchQuery = e.target.value.trim();
+                clearSearchBtn.classList.toggle('hidden', state.searchQuery === '');
+                updateUI();
+            });
+
+            clearSearchBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                state.searchQuery = '';
+                clearSearchBtn.classList.add('hidden');
+                updateUI();
+            });
+
+            // Region Pill Buttons
+            document.querySelectorAll('.region-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.region-btn').forEach(b => {
+                        b.className = "region-btn px-3 py-1 rounded-lg text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition";
+                    });
+                    
+                    e.target.className = "region-btn active px-3 py-1 rounded-lg text-xs font-medium bg-brand-600 text-white shadow-sm transition";
+                    state.selectedRegion = e.target.getAttribute('data-region');
+                    updateUI();
+                });
+            });
+
+            // Category Select Dropdown
+            document.getElementById('category-select').addEventListener('change', (e) => {
+                state.selectedCategory = e.target.value;
+                updateUI();
+            });
+
+            // Favorites Filter Toggle Button
+            document.getElementById('btn-show-favorites').addEventListener('click', () => {
+                state.showFavoritesOnly = !state.showFavoritesOnly;
+                const btn = document.getElementById('btn-show-favorites');
+                
+                if (state.showFavoritesOnly) {
+                    btn.classList.remove('bg-slate-800', 'text-amber-400', 'border-slate-700');
+                    btn.classList.add('bg-amber-500', 'text-slate-900', 'border-amber-400');
+                } else {
+                    btn.classList.remove('bg-amber-500', 'text-slate-900', 'border-amber-400');
+                    btn.classList.add('bg-slate-800', 'text-amber-400', 'border-slate-700');
+                }
+                updateUI();
+            });
+
+            // Reset All Filters
+            const resetFilters = () => {
+                state.searchQuery = '';
+                state.selectedRegion = 'all';
+                state.selectedCategory = 'all';
+                state.showFavoritesOnly = false;
+
+                document.getElementById('search-input').value = '';
+                document.getElementById('clear-search').classList.add('hidden');
+                document.getElementById('category-select').value = 'all';
+
+                document.querySelectorAll('.region-btn').forEach(b => {
+                    if (b.getAttribute('data-region') === 'all') {
+                        b.className = "region-btn active px-3 py-1 rounded-lg text-xs font-medium bg-brand-600 text-white shadow-sm transition";
+                    } else {
+                        b.className = "region-btn px-3 py-1 rounded-lg text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition";
+                    }
+                });
+
+                const favBtn = document.getElementById('btn-show-favorites');
+                favBtn.className = "flex items-center space-x-1.5 bg-slate-800 hover:bg-slate-700 text-amber-400 px-3 py-1.5 rounded-lg text-sm font-medium transition border border-slate-700";
+
+                map.setView([23.8, 120.9], 8);
+                updateUI();
+            };
+
+            document.getElementById('btn-reset-filters').addEventListener('click', resetFilters);
+            document.getElementById('btn-reset-empty').addEventListener('click', resetFilters);
+
+            // Modal Close Events
+            document.getElementById('close-modal').addEventListener('click', closeModal);
+            document.getElementById('detail-modal').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('detail-modal')) {
+                    closeModal();
+                }
+            });
+
+            // Map Quick Tools
+            document.getElementById('btn-fit-taiwan').addEventListener('click', () => {
+                map.flyTo([23.8, 120.9], 8, { duration: 1 });
+            });
+
+            document.getElementById('btn-locate-me').addEventListener('click', () => {
+                if ("geolocation" in navigator) {
+                    navigator.geolocation.getCurrentPosition(position => {
+                        const { latitude, longitude } = position.coords;
+                        map.flyTo([latitude, longitude], 14, { duration: 1.2 });
+                        L.popup()
+                            .setLatLng([latitude, longitude])
+                            .setContent('<div class="p-2 text-center text-xs font-bold text-slate-700">📍 您目前的位置</div>')
+                            .openOn(map);
+                    }, () => {
+                        alert("無法取得您的位置權限。");
+                    });
+                } else {
+                    alert("您的瀏覽器不支援地理定位功能。");
+                }
+            });
+
+            // Mobile View Switches
+            document.getElementById('mobile-toggle-map').addEventListener('click', () => switchMobileView('map'));
+            document.getElementById('mobile-toggle-list').addEventListener('click', () => switchMobileView('list'));
+
+            // Handle window resize logic
+            window.addEventListener('resize', () => {
+                if (window.innerWidth >= 768) {
+                    document.getElementById('sidebar').classList.remove('hidden');
+                    document.getElementById('map-container').classList.remove('hidden');
+                }
+            });
+        }
+
+        // ==========================================
+        // 10. Application Entry Point
+        // ==========================================
+        window.onload = function () {
+            initMap();
+            setupEventListeners();
+            updateUI();
+        };
+    </script>
+</body>
+</html>
