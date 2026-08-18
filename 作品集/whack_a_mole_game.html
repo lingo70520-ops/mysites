@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>3x3 歡樂打地鼠大冒險 Whack-a-Mole</title>
+    <!-- Tailwind CSS for utility classes -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Fredoka for cute playful typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --font-main: 'Fredoka', 'Noto Sans TC', sans-serif;
+            --color-grass: #8bc34a;
+            --color-dirt-dark: #4e342e;
+            --color-dirt-light: #6d4c41;
+            --color-wood: #8d6e63;
+            --color-accent: #ff9800;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%);
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* 地洞草地背景樣式 */
+        .game-board-container {
+            background: #a3e635;
+            border: 8px solid #65a30d;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1), inset 0 4px 6px rgba(255, 255, 255, 0.4);
+        }
+
+        /* 單個地洞容器 */
+        .hole {
+            position: relative;
+            overflow: hidden;
+            border-radius: 50% / 40%;
+            background: radial-gradient(ellipse at center, #2d1810 0%, #4e342e 70%, #3e2723 100%);
+            box-shadow: inset 0 10px 15px rgba(0, 0, 0, 0.8), 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 地洞前方的土堆掩體（掩蓋地鼠下半身） */
+        .hole::after {
+            content: '';
+            display: block;
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 38%;
+            background: linear-gradient(to bottom, #795548 0%, #5d4037 100%);
+            border-radius: 50% 50% 0 0 / 80% 80% 0 0;
+            z-index: 10;
+            border-top: 4px solid #8d6e63;
+            pointer-events: none;
+        }
+
+        /* 地鼠本體 */
+        .mole {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%) translateY(100%);
+            width: 80%;
+            height: 85%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 5;
+            cursor: pointer;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+        }
+
+        /* 地鼠探出頭狀態 */
+        .hole.up .mole {
+            transform: translateX(-50%) translateY(10%);
+        }
+
+        /* 被擊中時的特效狀態 */
+        .mole.hit {
+            animation: whackShake 0.3s ease-in-out forwards;
+        }
+
+        @keyframes whackShake {
+            0% { transform: translateX(-50%) translateY(10%) scale(1) rotate(0deg); }
+            20% { transform: translateX(-50%) translateY(10%) scale(0.85) rotate(-15deg); }
+            40% { transform: translateX(-50%) translateY(10%) scale(1.1) rotate(15deg); }
+            60% { transform: translateX(-50%) translateY(10%) scale(0.95) rotate(-5deg); }
+            100% { transform: translateX(-50%) translateY(100%) scale(0.8); }
+        }
+
+        /* 擊中加分浮動文字特效 */
+        .score-float {
+            position: absolute;
+            font-weight: 900;
+            color: #facc15;
+            text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;
+            pointer-events: none;
+            animation: floatUp 0.8s ease-out forwards;
+            z-index: 20;
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(0.8); }
+            50% { opacity: 1; transform: translateY(-30px) scale(1.2); }
+            100% { opacity: 0; transform: translateY(-60px) scale(1); }
+        }
+
+        /* 遊戲區域錘子滑鼠游標 */
+        .cursor-hammer {
+            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24' fill='%23ea580c'><path d='M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83zM3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z'/></svg>") 10 10, pointer;
+        }
+
+        /* 點擊擊中時的震動效果 */
+        .screen-shake {
+            animation: screenShakeAnim 0.15s ease-in-out;
+        }
+
+        @keyframes screenShakeAnim {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(-4px, 4px); }
+            75% { transform: translate(4px, -4px); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-4 cursor-hammer">
+
+    <!-- 遊戲頂部標題區 -->
+    <header class="w-full max-w-md text-center mt-2 mb-4">
+        <div class="inline-flex items-center gap-2 bg-white/80 backdrop-blur-md px-6 py-2 rounded-full shadow-lg border-2 border-sky-300">
+            <span class="text-3xl">🔨</span>
+            <h1 class="text-2xl md:text-3xl font-black text-slate-800 tracking-wide">歡樂打地鼠</h1>
+            <span class="text-3xl">🐹</span>
+        </div>
+    </header>
+
+    <!-- 主遊戲儀表板（分數、時間、連擊） -->
+    <main class="w-full max-w-md flex flex-col items-center gap-4">
+        
+        <div class="w-full bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-xl border-2 border-white flex justify-between items-center text-slate-700">
+            <!-- 剩餘時間 -->
+            <div class="flex flex-col items-center min-w-[80px]">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">剩餘時間</span>
+                <div class="flex items-center gap-1">
+                    <i class="fa-solid fa-clock text-amber-500 text-lg"></i>
+                    <span id="time-display" class="text-3xl font-black text-amber-600">30</span>
+                    <span class="text-xs font-bold text-amber-600 self-end mb-1">秒</span>
+                </div>
+            </div>
+
+            <!-- 分割線 -->
+            <div class="h-10 w-[2px] bg-slate-200"></div>
+
+            <!-- 當前得分 -->
+            <div class="flex flex-col items-center min-w-[80px]">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">當前得分</span>
+                <div class="flex items-center gap-1">
+                    <i class="fa-solid fa-trophy text-yellow-500 text-lg"></i>
+                    <span id="score-display" class="text-3xl font-black text-sky-600">0</span>
+                </div>
+            </div>
+
+            <!-- 分割線 -->
+            <div class="h-10 w-[2px] bg-slate-200"></div>
+
+            <!-- 最高紀錄 -->
+            <div class="flex flex-col items-center min-w-[80px]">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">最高紀錄</span>
+                <div class="flex items-center gap-1">
+                    <i class="fa-solid fa-crown text-amber-400 text-lg"></i>
+                    <span id="high-score-display" class="text-3xl font-black text-emerald-600">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3x3 九宮格遊戲主盤區 -->
+        <div id="game-board" class="game-board-container w-full aspect-square rounded-3xl p-4 grid grid-cols-3 gap-3 md:gap-4 relative transition-transform duration-100">
+            <!-- 9 個地洞將由 JavaScript 動態生成或直接寫在 HTML 內以確保極速渲染 -->
+            <div class="hole rounded-2xl" data-index="0"><div class="mole">🐹</div></div>
+            <div class="hole rounded-2xl" data-index="1"><div class="mole">🐹</div></div>
+            <div class="hole rounded-2xl" data-index="2"><div class="mole">🐹</div></div>
+            <div class="hole rounded-2xl" data-index="3"><div class="mole">🐹</div></div>
+            <div class="hole rounded-2xl" data-index="4"><div class="mole">🐹</div></div>
+            <div class="hole rounded-2xl" data-index="5"><div class="mole">🐹</div></div>
+            <div class="hole rounded-2xl" data-index="6"><div class="mole">🐹</div></div>
+            <div class="hole rounded-2xl" data-index="7"><div class="mole">🐹</div></div>
+            <div class="hole rounded-2xl" data-index="8"><div class="mole">🐹</div></div>
+        </div>
+
+        <!-- 操作按鈕區 -->
+        <div class="w-full flex gap-3">
+            <button id="start-btn" onclick="startGame()" class="flex-1 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-extrabold text-xl py-4 rounded-2xl shadow-lg hover:shadow-xl active:scale-95 transition-all flex items-center justify-center gap-2 border-b-4 border-green-800">
+                <i class="fa-solid fa-play"></i> 開始遊戲
+            </button>
+            <button id="sound-btn" onclick="toggleSound()" class="bg-white hover:bg-slate-50 text-slate-700 font-bold px-5 py-4 rounded-2xl shadow-md hover:shadow-lg active:scale-95 transition-all border-2 border-slate-200">
+                <i id="sound-icon" class="fa-solid fa-volume-high text-xl"></i>
+            </button>
+        </div>
+    </main>
+
+    <!-- 底部版權/提示語 -->
+    <footer class="mt-4 text-center text-xs text-sky-800 font-medium">
+        <p>💡 提示：連續快速擊中地鼠可獲得 Combo 加分喔！</p>
+    </footer>
+
+    <!-- 遊戲結束結算彈窗 (Modal) -->
+    <div id="game-over-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white rounded-3xl p-6 md:p-8 max-w-sm w-full text-center shadow-2xl transform scale-90 transition-transform duration-300 border-4 border-sky-200" id="modal-card">
+            
+            <div class="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-amber-300 shadow-inner">
+                <span id="modal-emoji" class="text-4xl">🏆</span>
+            </div>
+
+            <h2 id="modal-title" class="text-2xl font-black text-slate-800 mb-1">時間到！遊戲結束</h2>
+            <p id="modal-subtitle" class="text-slate-500 text-sm font-bold mb-6">太棒了！展現了精準的手速！</p>
+
+            <!-- 得分統計卡片 -->
+            <div class="bg-sky-50 rounded-2xl p-4 mb-6 border border-sky-100 flex justify-around items-center">
+                <div class="text-center">
+                    <div class="text-xs font-bold text-slate-400">最終得分</div>
+                    <div id="final-score" class="text-4xl font-black text-sky-600">0</div>
+                </div>
+                <div class="h-8 w-[1px] bg-sky-200"></div>
+                <div class="text-center">
+                    <div class="text-xs font-bold text-slate-400">最高連擊</div>
+                    <div id="max-combo" class="text-4xl font-black text-amber-500">0</div>
+                </div>
+            </div>
+
+            <button onclick="restartGame()" class="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-extrabold text-lg py-3.5 rounded-2xl shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 border-b-4 border-blue-800">
+                <i class="fa-solid fa-rotate-right"></i> 再玩一次
+            </button>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * 3x3 打地鼠遊戲核心 Engine
+         * 採用純原生 JavaScript 寫成，具備 Audio Context 音效合成、連擊機制與非同步計時控制
+         */
+
+        // 遊戲狀態變數定義
+        let score = 0;
+        let timeLeft = 30;
+        let highScore = localStorage.getItem('whack_mole_high_score') || 0;
+        let isPlaying = false;
+        let soundEnabled = true;
+        let comboCount = 0;
+        let maxCombo = 0;
+        let lastHoleIndex = -1;
+        
+        // 定時器引用
+        let gameTimer = null;
+        let molePopTimeout = null;
+
+        // DOM 元素快取
+        const holes = document.querySelectorAll('.hole');
+        const moles = document.querySelectorAll('.mole');
+        const scoreDisplay = document.getElementById('score-display');
+        const timeDisplay = document.getElementById('time-display');
+        const highScoreDisplay = document.getElementById('high-score-display');
+        const startBtn = document.getElementById('start-btn');
+        const gameBoard = document.getElementById('game-board');
+        const gameOverModal = document.getElementById('game-over-modal');
+        const modalCard = document.getElementById('modal-card');
+        const finalScoreDisplay = document.getElementById('final-score');
+        const maxComboDisplay = document.getElementById('max-combo');
+        const modalTitle = document.getElementById('modal-title');
+        const modalEmoji = document.getElementById('modal-emoji');
+
+        // 初始化頁面顯示
+        highScoreDisplay.textContent = highScore;
+
+        /**
+         * Web Audio API 音效合成器 (不需外部 mp3 檔案)
+         */
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioCtx();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        // 播放合成音效 (擊中音效)
+        function playHitSound() {
+            if (!soundEnabled) return;
+            initAudio();
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                // 設定打擊滑音
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.1);
+                
+                gain.gain.setValueAtTime(0.6, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.1);
+            } catch (e) { console.log(e); }
+        }
+
+        // 播放地鼠冒出音效
+        function playPopSound() {
+            if (!soundEnabled) return;
+            initAudio();
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.08);
+
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.08);
+            } catch (e) { console.log(e); }
+        }
+
+        // 播放遊戲結束音效
+        function playGameOverSound() {
+            if (!soundEnabled) return;
+            initAudio();
+            try {
+                const notes = [261.63, 329.63, 392.00, 523.25]; // C E G C
+                notes.forEach((freq, index) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, audioCtx.currentTime + index * 0.12);
+
+                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime + index * 0.12);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + index * 0.12 + 0.25);
+
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+
+                    osc.start(audioCtx.currentTime + index * 0.12);
+                    osc.stop(audioCtx.currentTime + index * 0.12 + 0.25);
+                });
+            } catch (e) { console.log(e); }
+        }
+
+        /**
+         * 隨機取得地洞 (確保不會連續兩次出現同一地洞)
+         */
+        function getRandomHole() {
+            const index = Math.floor(Math.random() * holes.length);
+            if (index === lastHoleIndex) {
+                return getRandomHole();
+            }
+            lastHoleIndex = index;
+            return holes[index];
+        }
+
+        /**
+         * 隨機停留時間 (0.8 秒 ~ 1.2 秒)
+         */
+        function getRandomTime(min = 800, max = 1200) {
+            return Math.round(Math.random() * (max - min) + min);
+        }
+
+        /**
+         * 地鼠冒出主邏輯
+         */
+        function popUpMole() {
+            if (!isPlaying) return;
+
+            const hole = getRandomHole();
+            const mole = hole.querySelector('.mole');
+            const time = getRandomTime(700, 1100); // 隨機縮回時間
+
+            // 重置地鼠狀態與表情
+            mole.textContent = '🐹';
+            mole.classList.remove('hit');
+            hole.classList.add('up');
+            playPopSound();
+
+            // 標記該隻地鼠未被擊中
+            mole.dataset.whacked = 'false';
+
+            // 設定停留時間倒數
+            molePopTimeout = setTimeout(() => {
+                hole.classList.remove('up');
+                
+                // 若地鼠沒被打到且自然縮回，重置 Combo 連擊
+                if (mole.dataset.whacked === 'false' && isPlaying) {
+                    comboCount = 0;
+                }
+
+                // 繼續冒出下一隻地鼠
+                if (isPlaying) {
+                    popUpMole();
+                }
+            }, time);
+        }
+
+        /**
+         * 處理玩家擊中地鼠事件
+         */
+        function whack(e) {
+            // 防止重複點擊刷分，或在遊戲未開始時點擊
+            if (!isPlaying) return;
+            const mole = e.currentTarget;
+            if (mole.dataset.whacked === 'true') return;
+
+            initAudio(); // 啟動音效 Context (符合瀏覽器自動播放策略)
+
+            // 標記已擊中
+            mole.dataset.whacked = 'true';
+            comboCount++;
+            if (comboCount > maxCombo) maxCombo = comboCount;
+
+            // 計算得分（基本分 1 分 + Combo 額外加分）
+            const pointsGained = 1 + (comboCount > 3 ? 1 : 0);
+            score += pointsGained;
+            scoreDisplay.textContent = score;
+
+            // 切換擊中表情與動畫效果
+            mole.textContent = '💥';
+            mole.classList.add('hit');
+            playHitSound();
+
+            // 震動遊戲盤畫面
+            gameBoard.classList.add('screen-shake');
+            setTimeout(() => gameBoard.classList.remove('screen-shake'), 150);
+
+            // 顯示浮動加分特效 (+1, Combo!)
+            showFloatingText(mole, comboCount > 3 ? `+${pointsGained} Combo! 🔥` : `+${pointsGained}`);
+
+            // 延遲一點點將地鼠縮回洞中
+            setTimeout(() => {
+                const hole = mole.parentElement;
+                hole.classList.remove('up');
+            }, 200);
+        }
+
+        /**
+         * 在擊中點顯示數字浮動特效
+         */
+        function showFloatingText(element, text) {
+            const rect = element.getBoundingClientRect();
+            const boardRect = gameBoard.getBoundingClientRect();
+
+            const floatEl = document.createElement('div');
+            floatEl.className = 'score-float text-xl md:text-2xl font-black';
+            floatEl.textContent = text;
+            
+            // 計算 relative 位置
+            const x = rect.left - boardRect.left + rect.width / 2 - 20;
+            const y = rect.top - boardRect.top;
+
+            floatEl.style.left = `${x}px`;
+            floatEl.style.top = `${y}px`;
+
+            gameBoard.appendChild(floatEl);
+
+            setTimeout(() => {
+                floatEl.remove();
+            }, 800);
+        }
+
+        // 為所有地鼠綁定點擊/觸控事件
+        moles.forEach(mole => {
+            mole.addEventListener('click', whack);
+            // 避免流動裝置雙擊放大與觸控延遲
+            mole.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                whack(e);
+            }, { passive: false });
+        });
+
+        /**
+         * 開始遊戲
+         */
+        function startGame() {
+            if (isPlaying) return;
+
+            // 重置遊戲變數
+            score = 0;
+            timeLeft = 30;
+            comboCount = 0;
+            maxCombo = 0;
+            isPlaying = true;
+
+            // 更新 UI 介面
+            scoreDisplay.textContent = '0';
+            timeDisplay.textContent = '30';
+            startBtn.disabled = true;
+            startBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            // 關閉 Modal (若開啟中)
+            closeModal();
+
+            // 開始倒數計時器
+            gameTimer = setInterval(() => {
+                timeLeft--;
+                timeDisplay.textContent = timeLeft;
+
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+
+            // 開始冒出地鼠
+            popUpMole();
+        }
+
+        /**
+         * 結束遊戲
+         */
+        function endGame() {
+            isPlaying = false;
+            clearInterval(gameTimer);
+            clearTimeout(molePopTimeout);
+
+            // 收回所有地鼠
+            holes.forEach(hole => hole.classList.remove('up'));
+
+            // 復原開始按鈕
+            startBtn.disabled = false;
+            startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+
+            // 更新最高紀錄
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('whack_mole_high_score', highScore);
+                highScoreDisplay.textContent = highScore;
+            }
+
+            // 播放結束音樂並顯示結算彈窗
+            playGameOverSound();
+            showGameOverModal();
+        }
+
+        /**
+         * 顯示結算彈窗 (Modal)
+         */
+        function showGameOverModal() {
+            finalScoreDisplay.textContent = score;
+            maxComboDisplay.textContent = maxCombo;
+
+            // 根據分數給予評價
+            if (score >= 35) {
+                modalEmoji.textContent = '👑';
+                modalTitle.textContent = '神速地鼠殺手！';
+            } else if (score >= 20) {
+                modalEmoji.textContent = '🏆';
+                modalTitle.textContent = '表現非常厲害！';
+            } else {
+                modalEmoji.textContent = '🐹';
+                modalTitle.textContent = '再接再厲！';
+            }
+
+            gameOverModal.classList.remove('opacity-0', 'pointer-events-none');
+            modalCard.classList.remove('scale-90');
+            modalCard.classList.add('scale-100');
+        }
+
+        /**
+         * 關閉結算彈窗
+         */
+        function closeModal() {
+            gameOverModal.classList.add('opacity-0', 'pointer-events-none');
+            modalCard.classList.remove('scale-100');
+            modalCard.classList.add('scale-90');
+        }
+
+        /**
+         * 再玩一次按鈕觸發
+         */
+        function restartGame() {
+            closeModal();
+            setTimeout(() => {
+                startGame();
+            }, 200);
+        }
+
+        /**
+         * 切換靜音/開音效
+         */
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('sound-icon');
+            if (soundEnabled) {
+                icon.className = 'fa-solid fa-volume-high text-xl text-slate-700';
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark text-xl text-red-500';
+            }
+        }
+    </script>
+</body>
+</html>
